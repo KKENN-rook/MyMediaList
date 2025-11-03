@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Welcome | MyMediaList{% endblock %}
+
+{% block content %}
+<section class="welcome-section">
+    <h1>Welcome to MyMediaList</h1>
+    <p>Track your books, games, shows, and films all in one place. Get insightful stats and stay
+        organized.</p>
+
+    <div class="button-container">
+        <a href="{{ url_for('login') }}" class="btn">Login</a>
+        <a href="{{ url_for('register') }}" class="btn">Register</a>
+    </div>
+</section>
+{% endblock %}

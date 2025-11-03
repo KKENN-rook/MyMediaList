@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{%block title%}MyMediaList{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    {% if session.get('user_id') %}
+    <nav>
+        <a href="{{ url_for('profile') }}">Profile</a>
+        <a href="{{ url_for('booklist') }}">Books</a>
+        <a href="{{ url_for('gamelist') }}">Games</a>
+        <a href="{{ url_for('showlist') }}">Shows & Films</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </nav>
+    {% endif %}
+
+    <main>
+        <div class="content">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+</body>
+
+</html>
