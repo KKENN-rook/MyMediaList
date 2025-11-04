@@ -9,7 +9,7 @@
 </head>
 
 <body>
-    {% if session.get('user_id') %}
+    {% if session.get('user') %}
     <nav>
         <a href="{{ url_for('profile') }}">Profile</a>
         <a href="{{ url_for('booklist') }}">Books</a>
@@ -18,6 +18,16 @@
         <a href="{{ url_for('logout') }}">Logout</a>
     </nav>
     {% endif %}
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul class="flashes">
+        {% for msg in messages %}
+        <li>{{ msg }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
 
     <main>
         <div class="content">
