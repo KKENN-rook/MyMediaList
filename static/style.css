@@ -22,3 +22,25 @@
 .btn:hover {
     background-color: #0056b3;
 }
+
+.flashes {
+    /* Removes bullet points */
+    list-style: none;
+    padding: 0;
+    margin: 1em auto;
+    max-width: 400px;
+}
+
+.flashes li {
+    /* Light gray background */
+    background-color: #f0f0f0;
+    /* Subtle border */
+    border: 1px solid #ccc;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    /* Rounded corners */
+    border-radius: 5px;
+    text-align: center;
+    font-weight: bold;
+    color: #333;
+}
