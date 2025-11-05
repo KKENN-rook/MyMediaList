@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<h1>{{ title }}</h1>
+
+<!-- Tabs for filtering by status -->
+<div class="tabs">
+    {% for status in statuses %}
+    <button class="tab {% if loop.first %}active{% endif %}" data-status="{{ status }}">
+        {{ status }}
+    </button>
+    {% endfor %}
+</div>
+
+<table class="media-table">
+    <thead>
+        <tr>
+            {% for header in headers %}
+            <th>{{ header }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in items %}
+        <tr data-status="{{ item['Status'] }}">
+            <td>{{ item['Title'] }}</td>
+            <td>
+                {% if item['Status'] == 'Completed' and item['Rating'] is not none %}
+                {{ item['Rating'] }}
+                {% else %}
+                -
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+    const tabs = document.querySelectorAll(".tab");
+    const rows = document.querySelectorAll("tbody tr");
+
+    tabs.forEach(tab => {
+        tab.addEventListener("click", () => {
+            tabs.forEach(t => t.classList.remove("active"));
+            tab.classList.add("active");
+            const status = tab.dataset.status;
+            rows.forEach(r => {
+                r.style.display = (status === "All" || r.dataset.status === status) ? "" : "none";
+            });
+        });
+    });
+</script>
+{% endblock %}
