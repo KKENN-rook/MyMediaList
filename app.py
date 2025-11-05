@@ -24,7 +24,7 @@ def login():
             return redirect(url_for("profile"))
         else:
             flash("Invalid username or password")
-            return redirect(url_for("home"))
+            return redirect(url_for("login"))
 
     return render_template("login.html")
 
@@ -73,7 +73,7 @@ def media_list(category):
                 {"Title": "The Outsiders", "Rating": 10, "Status": "Completed"},
                 {"Title": "Moby Dick", "Rating": 6, "Status": "Completed"},
                 {"Title": "To Kill a Mockingbird", "Rating": 7, "Status": "Completed"},
-                {"Title": "The Metamorphosis", "Rating": None , "Status": "Plan to Read"},
+                {"Title": "The Metamorphosis", "Rating": None, "Status": "Plan to Read"},
             ],
         },
         "games": {
@@ -84,8 +84,7 @@ def media_list(category):
                 {"Title": "Hades", "Rating": 10, "Status": "Completed"},
                 {"Title": "Final Fantasy VII", "Rating": None, "Status": "Playing"},
                 {"Title": "Ocarina of Time", "Rating": None, "Status": "Plan to Play"},
-                {"Title": "Halo Reach", "Rating": None, "Status": "Dropped"}
-                
+                {"Title": "Halo Reach", "Rating": None, "Status": "Dropped"},
             ],
         },
         "shows": {
@@ -103,9 +102,8 @@ def media_list(category):
     selected = data.get(category)
     if not selected:
         abort(404)
-    
-    return render_template("media_list.html", **selected)
 
+    return render_template("media_list.html", **selected)
 
 
 if __name__ == "__main__":

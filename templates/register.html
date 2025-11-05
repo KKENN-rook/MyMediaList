@@ -6,10 +6,12 @@
 <h1>Register</h1>
 <form method="POST" action="/register">
     <label for="username">Username:</label>
-    <input type="text" name="username" id="username" required>
+    <input type="text" name="username" id="username" required minlength="3" maxlength="16">
+    <small class="hint">Username must be 3-16 characters long.</small>
 
     <label for="password">Password:</label>
-    <input type="password" name="password" id="password" required>
+    <input type="password" name="password" id="password" required minlength="3" maxlength="16">
+    <small class="hint">Password must be 3-16 characters long.</small>
 
     <button type="submit">Register</button>
 </form>
