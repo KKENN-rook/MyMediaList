@@ -68,7 +68,7 @@ def media_list(category):
         "books": {
             "title": "Books",
             "headers": ["Title", "Rating"],
-            "statuses": ["All", "Completed", "In Progress", "Plan to Read", "Dropped"],
+            "statuses": ["All", "Completed", "Reading", "Plan to Read", "Dropped"],
             "items": [
                 {"Title": "The Outsiders", "Rating": 10, "Status": "Completed"},
                 {"Title": "Moby Dick", "Rating": 6, "Status": "Completed"},
@@ -79,16 +79,19 @@ def media_list(category):
         "games": {
             "title": "Games",
             "headers": ["Title", "Rating"],
-            "statuses": ["All", "Completed", "In Progress", "Plan to Play", "Dropped"],
+            "statuses": ["All", "Completed", "Playing", "Plan to Play", "Dropped"],
             "items": [
                 {"Title": "Hades", "Rating": 10, "Status": "Completed"},
                 {"Title": "Final Fantasy VII", "Rating": None, "Status": "Playing"},
+                {"Title": "Ocarina of Time", "Rating": None, "Status": "Plan to Play"},
+                {"Title": "Halo Reach", "Rating": None, "Status": "Dropped"}
+                
             ],
         },
         "shows": {
             "title": "Shows & Films",
             "headers": ["Title", "Rating"],
-            "statuses": ["All", "Completed", "In Progress", "Plan to Watch", "Dropped"],
+            "statuses": ["All", "Completed", "Watching", "Plan to Watch", "Dropped"],
             "items": [
                 {"Title": "Demon Slayer", "Rating": 7, "Status": "Completed"},
                 {"Title": "Toy Story", "Rating": 9, "Status": "Completed"},
