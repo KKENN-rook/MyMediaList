@@ -7,21 +7,30 @@
     margin-top: 30px;
 }
 
+/* General buttons */
+button,
 .btn {
-    display: inline-block;
-    padding: 12px 24px;
-    margin: 0 10px;
-    font-size: 16px;
-    background-color: #007bff;
+    background-color: #4caf93;
+    /* soft teal-green */
     color: white;
-    text-decoration: none;
+    border: none;
     border-radius: 6px;
-    transition: background-color 0.3s ease;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
 }
 
+/* Hover & press effects */
+button:hover,
 .btn:hover {
-    background-color: #0056b3;
+    background-color: #3f947f;
 }
+
+button:active,
+.btn:active {
+    transform: scale(0.97);
+}
+
 
 .flashes {
     /* Removes bullet points */
@@ -44,7 +53,7 @@
 
 /* === NAVBAR STYLING === */
 nav {
-    background-color: #222;
+    background-color: #1e3b33;
     display: flex;
     justify-content: center;
     gap: 1.5rem;
@@ -55,9 +64,8 @@ nav {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-/* Nav links */
 nav a {
-    color: #f0f0f0;
+    color: #eaf5f1;
     text-decoration: none;
     font-weight: bold;
     font-size: 1rem;
@@ -67,12 +75,12 @@ nav a {
 }
 
 nav a:hover {
-    background-color: #444;
-    color: #fff;
+    background-color: #2b574c;
+    color: white;
 }
 
 nav a.active {
-    background-color: #007bff;
+    background-color: #4caf93;
     color: white;
 }
 
@@ -83,24 +91,28 @@ nav a.active {
     gap: 10px;
 }
 
+/* Default (unselected) tabs */
 .tab {
-    background-color: #f4f4f4;
-    border: 1px solid #ccc;
+    background-color: #e8f3ef;
+    border: 1px solid #b8d7cd;
     border-radius: 6px;
     padding: 8px 16px;
     cursor: pointer;
     font-weight: 500;
+    color: #2d554a;
     transition: background-color 0.2s, color 0.2s;
 }
 
+/* Hover effect */
 .tab:hover {
-    background-color: #e0e0e0;
+    background-color: #d4ece4;
 }
 
+/* Active (selected) tab */
 .tab.active {
-    background-color: #4a90e2;
+    background-color: #4caf93;
     color: white;
-    border-color: #4a90e2;
+    border-color: #4caf93;
 }
 
 /* Table */
@@ -125,8 +137,7 @@ nav a.active {
 
 /* Title Column */
 .media-table th:first-child,
-.media-table td:first-child
-.media-table th:last-child,
+.media-table td:first-child .media-table th:last-child,
 .media-table td:last-child {
     width: 80%;
 }
@@ -240,7 +251,7 @@ nav a.active {
 }
 
 .edit-btn {
-    background-color: #007bff;
+    background-color: #4caf93;
     color: white;
     border: none;
     padding: 4px 8px;
@@ -248,9 +259,8 @@ nav a.active {
     cursor: pointer;
     font-size: 0.85em;
     margin-left: 10px;
-    white-space: nowrap;
 }
 
 .edit-btn:hover {
-    background-color: #0056b3;
+    background-color: #3f947f;
 }

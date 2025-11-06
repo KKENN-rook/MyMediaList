@@ -3,9 +3,17 @@
 {% block content %}
 <h1>{{ title }}</h1>
 
-<!-- Add Entry Button -->
+<!-- Controls above the table -->
 <div class="list-controls">
     <button id="addEntryBtn">Add Entry</button>
+
+    <div class="sort-menu">
+        <label for="sortSelect">Sort by:</label>
+        <select id="sortSelect">
+            <option value="title">Title (A-Z)</option>
+            <option value="rating">Rating (High -> Low)</option>
+        </select>
+    </div>
 </div>
 
 <!-- Tabs for filtering by status -->
@@ -158,6 +166,34 @@
     // Close on click outside modal
     window.addEventListener("click", e => {
         if (e.target === modal) modal.style.display = "none";
+    });
+
+
+    // ------------ SORTING LOGIC ------------ 
+    const sortSelect = document.getElementById("sortSelect");
+    const tbody = document.querySelector(".media-table tbody");
+
+    sortSelect.addEventListener("change", () => {
+        const option = sortSelect.value;
+        const rows = Array.from(tbody.querySelectorAll("tr"));
+
+        let sorted;
+        if (option === "title") {
+            sorted = rows.sort((a, b) => {
+                const titleA = a.querySelector(".title-text").textContent.trim().toLowerCase();
+                const titleB = b.querySelector(".title-text").textContent.trim().toLowerCase();
+                return titleA.localeCompare(titleB);
+            });
+        } else if (option === "rating") {
+            sorted = rows.sort((a, b) => {
+                const ratingA = parseFloat(a.children[1].textContent) || 0;
+                const ratingB = parseFloat(b.children[1].textContent) || 0;
+                return ratingB - ratingA; // high → low
+            });
+        }
+
+        tbody.innerHTML = "";
+        sorted.forEach(row => tbody.appendChild(row));
     });
 </script>
 
