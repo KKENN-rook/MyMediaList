@@ -50,7 +50,6 @@ def home():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
@@ -90,16 +89,11 @@ def register():
 
 @app.route("/profile")
 def profile():
-    if "user" not in session:
-        return redirect(url_for("home"))
     return render_template("profile.html", user=session["user"])
 
 
 @app.route("/<category>")
 def media_list(category):
-    if "user" not in session:
-        return redirect(url_for("home"))
-
     selected = data.get(category)
     if not selected:
         abort(404)
