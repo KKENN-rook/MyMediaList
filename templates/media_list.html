@@ -3,6 +3,11 @@
 {% block content %}
 <h1>{{ title }}</h1>
 
+<!-- Add Entry Button -->
+<div class="list-controls">
+    <button id="addEntryBtn">Add Entry</button>
+</div>
+
 <!-- Tabs for filtering by status -->
 <div class="tabs">
     {% for status in statuses %}
@@ -12,6 +17,7 @@
     {% endfor %}
 </div>
 
+<!-- Table -->
 <table class="media-table">
     <thead>
         <tr>
@@ -36,7 +42,47 @@
     </tbody>
 </table>
 
+<!-- Add Entry Modal -->
+<div id="addEntryModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Add New Entry</h2>
+        <p class="privacy-note">*Your list is private by default.</p>
+        <form method="POST" action="{{ url_for('add_entry', category=category) }}">
+            <div>
+                <label for="title">Title:</label>
+                <input type="text" id="title" name="title" required>
+            </div>
+
+            <div>
+                <label for="rating">Rating (1-10):</label>
+                <select id="rating" name="rating">
+                    <!-- optional dash for unrated -->
+                    <option value="">-</option>
+                    <!-- 1 through 10 rating -->
+                    {% for i in range(1, 11) %}
+                    <option value="{{ i }}">{{ i }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label for="status">Status:</label>
+                <select id="status" name="status">
+                    {% for s in statuses if s != "All" %}
+                    <option value="{{ s }}">{{ s }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <button type="submit">Add Entry</button>
+        </form>
+    </div>
+</div>
+
+<!-- JS -->
 <script>
+    // Tab switching logic 
     const tabs = document.querySelectorAll(".tab");
     const rows = document.querySelectorAll("tbody tr");
 
@@ -50,5 +96,17 @@
             });
         });
     });
+
+    // Modal open/close logic
+    const modal = document.getElementById("addEntryModal");
+    const btn = document.getElementById("addEntryBtn");
+    const closeBtn = document.querySelector(".close");
+
+    btn.onclick = () => modal.style.display = "block";
+    closeBtn.onclick = () => modal.style.display = "none";
+    window.onclick = (event) => {
+        if (event.target === modal) modal.style.display = "none";
+    };
 </script>
+
 {% endblock %}
