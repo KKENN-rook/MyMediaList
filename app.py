@@ -6,6 +6,42 @@ app.secret_key = "development_build"
 # Temporary user database
 users = {}
 
+# Temporary database (shared between all users for now while a database isn't implemented)
+data = {
+    "books": {
+        "title": "Books",
+        "headers": ["Title", "Rating"],
+        "statuses": ["All", "Completed", "Reading", "Plan to Read", "Dropped"],
+        "items": [
+            {"Title": "The Outsiders", "Rating": 10, "Status": "Completed"},
+            {"Title": "Moby Dick", "Rating": 6, "Status": "Completed"},
+            {"Title": "To Kill a Mockingbird", "Rating": 7, "Status": "Completed"},
+            {"Title": "The Metamorphosis", "Rating": None, "Status": "Plan to Read"},
+        ],
+    },
+    "games": {
+        "title": "Games",
+        "headers": ["Title", "Rating"],
+        "statuses": ["All", "Completed", "Playing", "Plan to Play", "Dropped"],
+        "items": [
+            {"Title": "Hades", "Rating": 10, "Status": "Completed"},
+            {"Title": "Final Fantasy VII", "Rating": None, "Status": "Playing"},
+            {"Title": "Ocarina of Time", "Rating": None, "Status": "Plan to Play"},
+            {"Title": "Halo Reach", "Rating": None, "Status": "Dropped"},
+        ],
+    },
+    "shows": {
+        "title": "Shows & Films",
+        "headers": ["Title", "Rating"],
+        "statuses": ["All", "Completed", "Watching", "Plan to Watch", "Dropped"],
+        "items": [
+            {"Title": "Demon Slayer", "Rating": 7, "Status": "Completed"},
+            {"Title": "Toy Story", "Rating": 9, "Status": "Completed"},
+            {"Title": "One Piece", "Rating": None, "Status": "Dropped"},
+        ],
+    },
+}
+
 
 @app.route("/")
 def home():
@@ -63,41 +99,6 @@ def profile():
 def media_list(category):
     if "user" not in session:
         return redirect(url_for("home"))
-
-    data = {
-        "books": {
-            "title": "Books",
-            "headers": ["Title", "Rating"],
-            "statuses": ["All", "Completed", "Reading", "Plan to Read", "Dropped"],
-            "items": [
-                {"Title": "The Outsiders", "Rating": 10, "Status": "Completed"},
-                {"Title": "Moby Dick", "Rating": 6, "Status": "Completed"},
-                {"Title": "To Kill a Mockingbird", "Rating": 7, "Status": "Completed"},
-                {"Title": "The Metamorphosis", "Rating": None, "Status": "Plan to Read"},
-            ],
-        },
-        "games": {
-            "title": "Games",
-            "headers": ["Title", "Rating"],
-            "statuses": ["All", "Completed", "Playing", "Plan to Play", "Dropped"],
-            "items": [
-                {"Title": "Hades", "Rating": 10, "Status": "Completed"},
-                {"Title": "Final Fantasy VII", "Rating": None, "Status": "Playing"},
-                {"Title": "Ocarina of Time", "Rating": None, "Status": "Plan to Play"},
-                {"Title": "Halo Reach", "Rating": None, "Status": "Dropped"},
-            ],
-        },
-        "shows": {
-            "title": "Shows & Films",
-            "headers": ["Title", "Rating"],
-            "statuses": ["All", "Completed", "Watching", "Plan to Watch", "Dropped"],
-            "items": [
-                {"Title": "Demon Slayer", "Rating": 7, "Status": "Completed"},
-                {"Title": "Toy Story", "Rating": 9, "Status": "Completed"},
-                {"Title": "One Piece", "Rating": None, "Status": "Dropped"},
-            ],
-        },
-    }
 
     selected = data.get(category)
     if not selected:
