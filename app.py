@@ -109,5 +109,31 @@ def add_entry(category):
     return redirect(url_for("media_list", category=category))
 
 
+@app.route("/edit/<category>", methods=["POST"])
+def edit_entry(category):
+    old_title = request.form["old_title"]
+    title = request.form["title"]
+    rating = request.form["rating"] or None
+    status = request.form["status"]
+
+    for item in data[category]["items"]:
+        if item["Title"] == old_title:
+            item["Title"] = title
+            item["Rating"] = rating
+            item["Status"] = status
+            break
+
+    flash(f"Updated '{title}' in your {category.capitalize()} list.")
+    return redirect(url_for("media_list", category=category))
+
+
+@app.route("/delete/<category>", methods=["POST"])
+def delete_entry(category):
+    title = request.form["title"]
+    data[category]["items"] = [i for i in data[category]["items"] if i["Title"] != title]
+    flash(f"Deleted '{title}' from your {category.capitalize()} list.")
+    return redirect(url_for("media_list", category=category))
+
+
 if __name__ == "__main__":
     app.run(debug=True)
