@@ -95,9 +95,6 @@ def profile():
 @app.route("/<category>")
 def media_list(category):
     selected = data.get(category)
-    if not selected:
-        abort(404)
-
     return render_template("media_list.html", category=category, **selected)
 
 
@@ -106,10 +103,6 @@ def add_entry(category):
     title = request.form["title"]
     rating = request.form["rating"] or None  # Used to account for "-" entries (It's value is set to "" in media_list)
     status = request.form["status"]
-
-    if category not in data:
-        abort(404)
-
     data[category]["items"].append({"Title": title, "Rating": rating, "Status": status})
 
     flash(f"Added '{title}' to your {category.capitalize()} list.")
