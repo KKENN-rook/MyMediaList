@@ -125,7 +125,9 @@ nav a.active {
 
 /* Title Column */
 .media-table th:first-child,
-.media-table td:first-child {
+.media-table td:first-child
+.media-table th:last-child,
+.media-table td:last-child {
     width: 80%;
 }
 
@@ -201,4 +203,54 @@ nav a.active {
     margin-top: 4px;
     margin-bottom: 10px;
     font-style: italic;
+}
+
+
+.form-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.delete-btn {
+    display: none;
+    background-color: #ff4c4c;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.delete-btn:hover {
+    background-color: #e03e3e;
+}
+
+.title-cell {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.title-text {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.edit-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85em;
+    margin-left: 10px;
+    white-space: nowrap;
+}
+
+.edit-btn:hover {
+    background-color: #0056b3;
 }
