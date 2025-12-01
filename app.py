@@ -1,10 +1,18 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, session, abort
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import String, select
+from werkzeug.security import generate_password_hash, check_password_hash
+import os
 
+
+# Set up Flask and connect SQLAlchemy to the SQLite database
 app = Flask(__name__)
-app.secret_key = "development_build"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///mymedialist.db"
+db = SQLAlchemy(app)
 
-# Temporary user database
-users = {}
+# Initialize for client side sessions
+app.secret_key = "development_build"
 
 # Temporary database (shared between all users for now while a database isn't implemented)
 data = {
@@ -43,6 +51,23 @@ data = {
 }
 
 
+class User(db.Model):
+    __tablename__ = "users"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    username: Mapped[str] = mapped_column(String(30), unique=True, nullable=False)
+    pw_hash: Mapped[str] = mapped_column(String(255), nullable=False)  # Hash could use many chars
+
+    def set_password(self, password: str):
+        self.pw_hash = generate_password_hash(password)
+
+    def check_password(self, password: str) -> bool:
+        return check_password_hash(self.pw_hash, password)
+
+    def __repr__(self):
+        return f"<User {self.username}>"
+
+
 @app.route("/")
 def home():
     return render_template("home.html")
@@ -50,12 +75,15 @@ def home():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    # Verify login information
     if request.method == "POST":
-        username = request.form["username"]
-        password = request.form["password"]
-
-        if users.get(username) == password:
-            session["user"] = username
+        form_username = request.form["username"]
+        form_password = request.form["password"]
+        stmt = select(User).filter_by(username=form_username)
+        user = db.session.execute(stmt).scalar()
+        if user and user.check_password(form_password):
+            session["user"] = user.username
+            flash("Login Successful!")
             return redirect(url_for("profile"))
         else:
             flash("Invalid username or password")
@@ -74,15 +102,23 @@ def logout():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
-        username = request.form["username"]
-        password = request.form["password"]
+        form_username = request.form["username"]
+        form_password = request.form["password"]
 
-        if username in users:
+        # Verify inputted username does not already exist
+        stmt = select(User).filter_by(username=form_username)
+        existing_user = db.session.execute(stmt).scalar()
+        if existing_user:
             flash("Username already exists.")
-        else:
-            users[username] = password
-            flash("Registered successfully! Please log in.")
-            return redirect(url_for("login"))
+            return redirect(url_for("register"))
+
+        # Create and Save new user
+        user = User(username=form_username)
+        user.set_password(form_password)
+        db.session.add(user)
+        db.session.commit()
+        flash("Registered successfully! Please log in.")
+        return redirect(url_for("login"))
 
     return render_template("register.html")
 
@@ -95,6 +131,9 @@ def profile():
 @app.route("/<category>")
 def media_list(category):
     selected = data.get(category)
+
+    if selected is None:
+        abort(404)
     return render_template("media_list.html", category=category, **selected)
 
 
@@ -136,4 +175,7 @@ def delete_entry(category):
 
 
 if __name__ == "__main__":
+    # create_all() requires application context
+    with app.app_context():
+        db.create_all()
     app.run(debug=True)
