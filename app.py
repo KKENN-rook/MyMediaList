@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import String, Text, select, ForeignKey
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 
 
 # Set up Flask and connect SQLAlchemy to the SQLite database
@@ -12,6 +13,10 @@ db = SQLAlchemy(app)
 
 # Initialize for client side sessions
 app.secret_key = "development_build"
+
+# Flask-login setup
+login_manager = LoginManager(app)
+login_manager.login_view = "login"
 
 # Temporary database (shared between all users for now while a database isn't implemented)
 data = {
@@ -50,14 +55,14 @@ data = {
 }
 
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     username: Mapped[str] = mapped_column(String(30), unique=True, nullable=False)
     pw_hash: Mapped[str] = mapped_column(String(255), nullable=False)  # Hash could use many chars
-    media_items: Mapped[list["MediaItem"]] = relationship(back_populates="user") # 1:M -- User:Media Items 
- 
+    media_items: Mapped[list["MediaItem"]] = relationship(back_populates="user")  # 1:M -- User:Media Items
+
     def set_password(self, password: str):
         self.pw_hash = generate_password_hash(password)
 
@@ -66,7 +71,8 @@ class User(db.Model):
 
     def __repr__(self):
         return f"<User {self.username}>"
-    
+
+
 class MediaItem(db.Model):
     __tablename__ = "media_items"
 
@@ -76,15 +82,19 @@ class MediaItem(db.Model):
     status: Mapped[str] = mapped_column(String(20), nullable=False)
     rating: Mapped[int | None] = mapped_column(nullable=True)
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
-    # Generic progress tracking 
+    # Generic progress tracking
     total_units: Mapped[int | None] = mapped_column(nullable=True)
     completed_units: Mapped[int | None] = mapped_column(nullable=True)
     unit_type: Mapped[str | None] = mapped_column(String(20), nullable=True)
-    
+
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
     user: Mapped["User"] = relationship(back_populates="media_items")
 
-    
+
+@login_manager.user_loader
+def load_user(user_id: str):
+    return db.session.get(User, int(user_id))
+
 
 @app.route("/")
 def home():
@@ -100,9 +110,12 @@ def login():
         stmt = select(User).filter_by(username=form_username)
         user = db.session.execute(stmt).scalar()
         if user and user.check_password(form_password):
-            session["user"] = user.username
+            login_user(user)
             flash("Login Successful!")
-            return redirect(url_for("profile"))
+            # If a user tries to access a protected page w/o being logged in
+            # they will be redirected to login and the page tried will be stored under the key "next"
+            next_page = request.args.get("next")
+            return redirect(next_page or url_for("profile"))
         else:
             flash("Invalid username or password")
             return redirect(url_for("login"))
@@ -112,7 +125,7 @@ def login():
 
 @app.route("/logout")
 def logout():
-    session.pop("user", None)
+    logout_user()
     flash("You are now logged out.")
     return redirect(url_for("home"))
 
@@ -120,7 +133,7 @@ def logout():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
-        form_username = request.form["username"].strip().lower()  # Usernames are case insensitive 
+        form_username = request.form["username"].strip().lower()  # Usernames are case insensitive
         form_password = request.form["password"]
 
         # Verify inputted username does not already exist
@@ -142,8 +155,9 @@ def register():
 
 
 @app.route("/profile")
+@login_required
 def profile():
-    return render_template("profile.html", user=session["user"])
+    return render_template("profile.html", user=current_user.username)
 
 
 @app.route("/<category>")

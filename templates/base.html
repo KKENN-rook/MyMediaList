@@ -9,7 +9,7 @@
 </head>
 
 <body>
-    {% if session.get('user') %}
+    {% if current_user.is_authenticated %}
     <nav>
         <a href="{{ url_for('profile') }}">Profile</a>
         <a href="{{ url_for('media_list', category='books') }}">Books</a>
