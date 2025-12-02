@@ -3,7 +3,6 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import String, select, ForeignKey
 from werkzeug.security import generate_password_hash, check_password_hash
-import os
 
 
 # Set up Flask and connect SQLAlchemy to the SQLite database
@@ -120,7 +119,7 @@ def logout():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
-        form_username = request.form["username"]
+        form_username = request.form["username"].strip().lower()  # Usernames are case insensitive 
         form_password = request.form["password"]
 
         # Verify inputted username does not already exist
