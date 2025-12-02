@@ -94,7 +94,7 @@ def home():
 def login():
     # Verify login information
     if request.method == "POST":
-        form_username = request.form["username"]
+        form_username = request.form["username"].strip().lower()
         form_password = request.form["password"]
         stmt = select(User).filter_by(username=form_username)
         user = db.session.execute(stmt).scalar()
