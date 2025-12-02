@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, session, abort
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, select, ForeignKey
+from sqlalchemy import String, Text, select, ForeignKey
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
@@ -75,6 +75,7 @@ class MediaItem(db.Model):
     category: Mapped[str] = mapped_column(String(20), nullable=False)
     status: Mapped[str] = mapped_column(String(20), nullable=False)
     rating: Mapped[int | None] = mapped_column(nullable=True)
+    notes: Mapped[str | None] = mapped_column(Text, nullable=True)
     # Generic progress tracking 
     total_units: Mapped[int | None] = mapped_column(nullable=True)
     completed_units: Mapped[int | None] = mapped_column(nullable=True)
