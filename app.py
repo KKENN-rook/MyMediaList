@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, session, abort
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import String, select
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import String, select, ForeignKey
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 
@@ -57,7 +57,8 @@ class User(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     username: Mapped[str] = mapped_column(String(30), unique=True, nullable=False)
     pw_hash: Mapped[str] = mapped_column(String(255), nullable=False)  # Hash could use many chars
-
+    media_items: Mapped[list["MediaItem"]] = relationship(back_populates="user") # 1:M -- User:Media Items 
+ 
     def set_password(self, password: str):
         self.pw_hash = generate_password_hash(password)
 
@@ -66,7 +67,24 @@ class User(db.Model):
 
     def __repr__(self):
         return f"<User {self.username}>"
+    
+class MediaItem(db.Model):
+    __tablename__ = "media_items"
 
+    id: Mapped[int] = mapped_column(primary_key=True)
+    title: Mapped[str] = mapped_column(String(255), nullable=False)
+    category: Mapped[str] = mapped_column(String(20), nullable=False)
+    status: Mapped[str] = mapped_column(String(20), nullable=False)
+    rating: Mapped[int | None] = mapped_column(nullable=True)
+    # Generic progress tracking 
+    total_units: Mapped[int | None] = mapped_column(nullable=True)
+    completed_units: Mapped[int | None] = mapped_column(nullable=True)
+    unit_type: Mapped[str | None] = mapped_column(String(20), nullable=True)
+    
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+    user: Mapped["User"] = relationship(back_populates="media_items")
+
+    
 
 @app.route("/")
 def home():
