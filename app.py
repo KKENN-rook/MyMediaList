@@ -124,7 +124,7 @@ def register():
 @app.route("/profile")
 @login_required
 def profile():
-    return render_template("profile.html", user=current_user.username)
+    return render_template("profile.html")
 
 
 @app.route("/<category>")
@@ -200,10 +200,28 @@ def edit_entry(category):
 
 
 @app.route("/delete/<category>", methods=["POST"])
+@login_required
 def delete_entry(category):
+    if category not in CATEGORY_TITLES:
+        abort(404)
+
     title = request.form["title"]
-    data[category]["items"] = [i for i in data[category]["items"] if i["Title"] != title]
-    flash(f"Deleted '{title}' from your {category.capitalize()} list.")
+
+    stmt = select(MediaItem).where(
+        MediaItem.category == category,
+        MediaItem.user_id == current_user.id,
+        MediaItem.title == title,
+    )
+    item = db.session.execute(stmt).scalar_one_or_none()
+
+    if not item:
+        flash("Item not found or you don't have permission to delete it.")
+        return redirect(url_for("media_list", category=category))
+
+    db.session.delete(item)
+    db.session.commit()
+
+    flash(f"Deleted '{title}' from your {CATEGORY_TITLES[category]} list.")
     return redirect(url_for("media_list", category=category))
 
 

@@ -35,7 +35,7 @@
     </thead>
     <tbody>
         {% for item in items %}
-        <tr data-status="{{ item['Status'] }}">
+        <tr data-status="{{ item.status }}">
             <td class="title-cell">
                 <span class="title-text">{{ item.title }}</span>
                 <button class="edit-btn" data-title="{{ item.title }}"
@@ -87,12 +87,10 @@
             <div>
                 <label for="status">Status:</label>
                 <select id="status" name="status">
-                    <select id="status" name="status">
-                        <option value="Completed">Completed</option>
-                        <option value="In Progress">In Progress</option>
-                        <option value="Planned">Planned</option>
-                        <option value="Dropped">Dropped</option>
-                    </select>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Planned">Planned</option>
+                    <option value="Dropped">Dropped</option>
                 </select>
             </div>
 
