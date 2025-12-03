@@ -87,9 +87,12 @@
             <div>
                 <label for="status">Status:</label>
                 <select id="status" name="status">
-                    {% for s in statuses if s != "All" %}
-                    <option value="{{ s }}">{{ s }}</option>
-                    {% endfor %}
+                    <select id="status" name="status">
+                        <option value="Completed">Completed</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Planned">Planned</option>
+                        <option value="Dropped">Dropped</option>
+                    </select>
                 </select>
             </div>
 
