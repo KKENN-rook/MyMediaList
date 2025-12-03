@@ -29,23 +29,24 @@
 <table class="media-table">
     <thead>
         <tr>
-            {% for header in headers %}
-            <th>{{ header }}</th>
-            {% endfor %}
+            <th>Title</th>
+            <th>Rating</th>
         </tr>
     </thead>
     <tbody>
         {% for item in items %}
         <tr data-status="{{ item['Status'] }}">
             <td class="title-cell">
-                <span class="title-text">{{ item['Title'] }}</span>
-                <button class="edit-btn" data-title="{{ item['Title'] }}"
-                    data-rating="{{ item['Rating'] }}" data-status="{{ item['Status'] }}">Edit
+                <span class="title-text">{{ item.title }}</span>
+                <button class="edit-btn" data-title="{{ item.title }}"
+                    data-rating="{{ item.rating }}" data-status="{{ item.status }}"
+                    data-notes="{{ item.notes or '' }}">
+                    Edit
                 </button>
             </td>
             <td>
-                {% if item['Status'] == 'Completed' and item['Rating'] is not none %}
-                {{ item['Rating'] }}
+                {% if item.status == 'Completed' and item.rating is not none %}
+                {{ item.rating }}
                 {% else %}
                 -
                 {% endif %}
@@ -90,6 +91,11 @@
                     <option value="{{ s }}">{{ s }}</option>
                     {% endfor %}
                 </select>
+            </div>
+
+            <div>
+                <label for="notes">Notes (optional)</label>
+                <textarea id="notes" name="notes" rows="3"></textarea>
             </div>
 
             <div class="form-buttons">
@@ -145,6 +151,7 @@
             document.getElementById("title").value = btn.dataset.title;
             document.getElementById("rating").value = btn.dataset.rating || "";
             document.getElementById("status").value = btn.dataset.status;
+            document.getElementById("notes").value = btn.dataset.notes || "";
 
             modal.style.display = "block";
         });

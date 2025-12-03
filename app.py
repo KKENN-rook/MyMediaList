@@ -5,6 +5,9 @@ from sqlalchemy import String, Text, select, ForeignKey
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 
+# Valid Categories : Their page title
+CATEGORY_TITLES = {"books": "Books", "games": "Games", "shows": "Shows & Film"}
+
 
 # Set up Flask and connect SQLAlchemy to the SQLite database
 app = Flask(__name__)
@@ -17,42 +20,6 @@ app.secret_key = "development_build"
 # Flask-login setup
 login_manager = LoginManager(app)
 login_manager.login_view = "login"
-
-# Temporary database (shared between all users for now while a database isn't implemented)
-data = {
-    "books": {
-        "title": "Books",
-        "headers": ["Title", "Rating"],
-        "statuses": ["All", "Completed", "Reading", "Plan to Read", "Dropped"],
-        "items": [
-            {"Title": "The Outsiders", "Rating": 10, "Status": "Completed"},
-            {"Title": "Moby Dick", "Rating": 6, "Status": "Completed"},
-            {"Title": "To Kill a Mockingbird", "Rating": 7, "Status": "Completed"},
-            {"Title": "The Metamorphosis", "Rating": None, "Status": "Plan to Read"},
-        ],
-    },
-    "games": {
-        "title": "Games",
-        "headers": ["Title", "Rating"],
-        "statuses": ["All", "Completed", "Playing", "Plan to Play", "Dropped"],
-        "items": [
-            {"Title": "Hades", "Rating": 10, "Status": "Completed"},
-            {"Title": "Final Fantasy VII", "Rating": None, "Status": "Playing"},
-            {"Title": "Ocarina of Time", "Rating": None, "Status": "Plan to Play"},
-            {"Title": "Halo Reach", "Rating": None, "Status": "Dropped"},
-        ],
-    },
-    "shows": {
-        "title": "Shows & Films",
-        "headers": ["Title", "Rating"],
-        "statuses": ["All", "Completed", "Watching", "Plan to Watch", "Dropped"],
-        "items": [
-            {"Title": "Demon Slayer", "Rating": 7, "Status": "Completed"},
-            {"Title": "Toy Story", "Rating": 9, "Status": "Completed"},
-            {"Title": "One Piece", "Rating": None, "Status": "Dropped"},
-        ],
-    },
-}
 
 
 class User(UserMixin, db.Model):
@@ -161,22 +128,42 @@ def profile():
 
 
 @app.route("/<category>")
+@login_required
 def media_list(category):
-    selected = data.get(category)
-
-    if selected is None:
+    if category not in CATEGORY_TITLES:
         abort(404)
-    return render_template("media_list.html", category=category, **selected)
+
+    stmt = (
+        select(MediaItem)
+        .where(MediaItem.category == category, MediaItem.user_id == current_user.id)
+        .order_by(MediaItem.title)
+    )
+    items = db.session.execute(stmt).scalars().all()
+
+    return render_template("media_list.html", category=category, title=CATEGORY_TITLES[category], items=items)
 
 
 @app.route("/add/<category>", methods=["POST"])
+@login_required
 def add_entry(category):
-    title = request.form["title"]
-    rating = request.form["rating"] or None  # Used to account for "-" entries (It's value is set to "" in media_list)
+    title = request.form["title"].strip()
+    rating_raw = request.form.get("rating")
+    rating = int(rating_raw) if rating_raw else None  # will return as "" if the user selects "-" for rating
     status = request.form["status"]
-    data[category]["items"].append({"Title": title, "Rating": rating, "Status": status})
+    notes = request.form.get("notes") or None
 
-    flash(f"Added '{title}' to your {category.capitalize()} list.")
+    new_item = MediaItem(
+        title=title,
+        category=category,
+        status=status,
+        rating=rating,
+        notes=notes,
+        user_id=current_user.id,
+    )
+    db.session.add(new_item)
+    db.session.commit()
+
+    flash(f"Added '{title}' to your {CATEGORY_TITLES[category]} list.")
     return redirect(url_for("media_list", category=category))
 
 
