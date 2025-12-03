@@ -146,9 +146,11 @@ def media_list(category):
 @app.route("/add/<category>", methods=["POST"])
 @login_required
 def add_entry(category):
+    if category not in CATEGORY_TITLES:
+        abort(404)
+
     title = request.form["title"].strip()
-    rating_raw = request.form.get("rating")
-    rating = int(rating_raw) if rating_raw else None  # will return as "" if the user selects "-" for rating
+    rating = int(request.form["rating"]) if request.form["rating"] else None  # returns "" if "-" option is selected
     status = request.form["status"]
     notes = request.form.get("notes") or None
 
@@ -169,19 +171,31 @@ def add_entry(category):
 
 @app.route("/edit/<category>", methods=["POST"])
 def edit_entry(category):
+    if category not in CATEGORY_TITLES:
+        abort(404)
+
     old_title = request.form["old_title"]
     title = request.form["title"]
-    rating = request.form["rating"] or None
+    rating = int(request.form["rating"]) if request.form["rating"] else None
     status = request.form["status"]
 
-    for item in data[category]["items"]:
-        if item["Title"] == old_title:
-            item["Title"] = title
-            item["Rating"] = rating
-            item["Status"] = status
-            break
+    stmt = select(MediaItem).where(
+        MediaItem.category == category,
+        MediaItem.user_id == current_user.id,
+        MediaItem.title == old_title,
+    )
+    item = db.session.execute(stmt).scalar_one_or_none()
 
-    flash(f"Updated '{title}' in your {category.capitalize()} list.")
+    if not item:
+        flash("Item not found or you don't have permission to edit it.")
+        return redirect(url_for("media_list", category=category))
+
+    item.title = title
+    item.rating = rating
+    item.status = status
+    db.session.commit()
+
+    flash(f"Updated '{title}' in your {CATEGORY_TITLES[category]} list.")
     return redirect(url_for("media_list", category=category))
 
 
