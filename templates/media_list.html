@@ -39,8 +39,8 @@
             <td class="title-cell">
                 <span class="title-text">{{ item.title }}</span>
                 <button class="edit-btn" data-title="{{ item.title }}"
-                    data-rating="{{ item.rating }}" data-status="{{ item.status }}"
-                    data-notes="{{ item.notes or '' }}">
+                    data-rating="{{ item.rating if item.rating is not none else '' }}"
+                    data-status="{{ item.status }}" data-notes="{{ item.notes or '' }}">
                     Edit
                 </button>
             </td>
