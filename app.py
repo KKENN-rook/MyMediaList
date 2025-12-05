@@ -212,7 +212,7 @@ def delete_entry(category):
         MediaItem.user_id == current_user.id,
         MediaItem.title == title,
     )
-    item = db.session.execute(stmt).scalar_one_or_none()
+    item = db.session.execute(stmt).scalars().first()
 
     if not item:
         flash("Item not found or you don't have permission to delete it.")
