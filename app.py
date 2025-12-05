@@ -170,6 +170,7 @@ def add_entry(category):
 
 
 @app.route("/edit/<category>", methods=["POST"])
+@login_required
 def edit_entry(category):
     if category not in CATEGORY_TITLES:
         abort(404)
@@ -178,13 +179,14 @@ def edit_entry(category):
     title = request.form["title"]
     rating = int(request.form["rating"]) if request.form["rating"] else None
     status = request.form["status"]
+    notes = request.form.get("notes") or None
 
     stmt = select(MediaItem).where(
         MediaItem.category == category,
         MediaItem.user_id == current_user.id,
         MediaItem.title == old_title,
     )
-    item = db.session.execute(stmt).scalar_one_or_none()
+    item = db.session.execute(stmt).scalars().first()
 
     if not item:
         flash("Item not found or you don't have permission to edit it.")
@@ -193,6 +195,7 @@ def edit_entry(category):
     item.title = title
     item.rating = rating
     item.status = status
+    item.notes = notes
     db.session.commit()
 
     flash(f"Updated '{title}' in your {CATEGORY_TITLES[category]} list.")
