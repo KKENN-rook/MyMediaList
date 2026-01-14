@@ -11,11 +11,11 @@
 <body>
     {% if current_user.is_authenticated %}
     <nav>
-        <a href="{{ url_for('profile') }}">Profile</a>
-        <a href="{{ url_for('media_list', category='books') }}">Books</a>
-        <a href="{{ url_for('media_list', category='games') }}">Games</a>
-        <a href="{{ url_for('media_list', category='shows') }}">Shows & Films</a>
-        <a href="{{ url_for('logout') }}">Logout</a>
+        <a href="{{ url_for('media.profile') }}">Profile</a>
+        <a href="{{ url_for('media.media_list', category='books') }}">Books</a>
+        <a href="{{ url_for('media.media_list', category='games') }}">Games</a>
+        <a href="{{ url_for('media.media_list', category='shows') }}">Shows & Films</a>
+        <a href="{{ url_for('auth.logout') }}">Logout</a>
     </nav>
     {% endif %}
 
