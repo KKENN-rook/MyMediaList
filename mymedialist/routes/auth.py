@@ -5,7 +5,7 @@ from sqlalchemy import select
 from ..extensions import db
 from ..models import User
 
-bp = Blueprint("auth", __name__)
+bp = Blueprint("auth", __name__, url_prefix='/auth')
 
 
 @bp.route("/login", methods=["GET", "POST"])
