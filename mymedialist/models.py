@@ -1,16 +1,17 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, Text, select, ForeignKey
-from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
+from sqlalchemy import String, Text, ForeignKey
+from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from .extensions import db, login_manager
+
 
 class User(UserMixin, db.Model):
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     username: Mapped[str] = mapped_column(String(30), unique=True, nullable=False)
-    pw_hash: Mapped[str] = mapped_column(String(255), nullable=False)  # Hash could use many chars
+    pw_hash: Mapped[str] = mapped_column(String(255), nullable=False)  # 255 cause Hash could use many chars
     media_items: Mapped[list["MediaItem"]] = relationship(back_populates="user")  # 1:M -- User:Media Items
 
     def set_password(self, password: str):
