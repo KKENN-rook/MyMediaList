@@ -11,18 +11,17 @@ def create_app():
     db.init_app(app)
     login_manager.init_app(app)
 
-    print("login_view =", login_manager.login_view)
-    print("has login endpoint =", "login" in app.view_functions)
-    print("has auth.login endpoint =", "auth.login" in app.view_functions)
-
     # register models
     from . import models
 
+    # register bps 
+    from .routes.main import bp as main_bp
     from .routes.auth import bp as auth_bp
-    from .routes.media import bp as media_bp
+    from .routes.lists import bp as lists_bp
 
+    app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp)
-    app.register_blueprint(media_bp)
+    app.register_blueprint(lists_bp)
 
     with app.app_context():
         db.create_all()

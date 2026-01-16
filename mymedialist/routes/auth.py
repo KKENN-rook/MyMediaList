@@ -5,7 +5,7 @@ from sqlalchemy import select
 from ..extensions import db
 from ..models import User
 
-bp = Blueprint("auth", __name__, url_prefix='/auth')
+bp = Blueprint("auth", __name__, url_prefix="/auth")
 
 
 @bp.route("/login", methods=["GET", "POST"])
@@ -22,7 +22,7 @@ def login():
             # If a user tries to access a protected page w/o being logged in
             # they will be redirected to login and the page tried will be stored under the key "next"
             next_page = request.args.get("next")
-            return redirect(next_page or url_for("media.profile"))
+            return redirect(next_page or url_for("main.profile"))
         else:
             flash("Invalid username or password")
             return redirect(url_for("auth.login"))
@@ -35,7 +35,7 @@ def login():
 def logout():
     logout_user()
     flash("You are now logged out.")
-    return redirect(url_for("media.home"))
+    return redirect(url_for("main.home"))
 
 
 @bp.route("/register", methods=["GET", "POST"])

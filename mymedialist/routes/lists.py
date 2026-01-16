@@ -8,18 +8,7 @@ from ..models import MediaItem
 # Valid Categories : Their page title
 CATEGORY_TITLES = {"books": "Books", "games": "Games", "shows": "Shows & Film"}
 
-bp = Blueprint("media", __name__)
-
-
-@bp.route("/")
-def home():
-    return render_template("home.html")
-
-
-@bp.route("/profile")
-@login_required
-def profile():
-    return render_template("profile.html")
+bp = Blueprint("lists", __name__)
 
 
 @bp.route("/<category>")
@@ -61,7 +50,7 @@ def add_entry(category):
     db.session.commit()
 
     flash(f"Added '{title}' to your {CATEGORY_TITLES[category]} list.")
-    return redirect(url_for("media.media_list", category=category))
+    return redirect(url_for("lists.media_list", category=category))
 
 
 @bp.route("/edit/<category>", methods=["POST"])
@@ -85,7 +74,7 @@ def edit_entry(category):
 
     if not item:
         flash("Item not found or you don't have permission to edit it.")
-        return redirect(url_for("media.media_list", category=category))
+        return redirect(url_for("lists.media_list", category=category))
 
     item.title = title
     item.rating = rating
@@ -94,7 +83,7 @@ def edit_entry(category):
     db.session.commit()
 
     flash(f"Updated '{title}' in your {CATEGORY_TITLES[category]} list.")
-    return redirect(url_for("media.media_list", category=category))
+    return redirect(url_for("lists.media_list", category=category))
 
 
 @bp.route("/delete/<category>", methods=["POST"])
@@ -114,10 +103,10 @@ def delete_entry(category):
 
     if not item:
         flash("Item not found or you don't have permission to delete it.")
-        return redirect(url_for("media.media_list", category=category))
+        return redirect(url_for("lists.media_list", category=category))
 
     db.session.delete(item)
     db.session.commit()
 
     flash(f"Deleted '{title}' from your {CATEGORY_TITLES[category]} list.")
-    return redirect(url_for("media.media_list", category=category))
+    return redirect(url_for("lists.media_list", category=category))
