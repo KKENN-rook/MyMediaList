@@ -48,7 +48,7 @@ class MediaWork(db.Model):
     # Prevents duplicates for API-sourced items; must have source/external_id pair must be unique.
     # Does not affect manual entries as Null values do not participate in uniqueness
     # Unique constraint must be a tuple or dict
-    __table_args__ = UniqueConstraint("source", "external_id", name="uq_media_source_external_id")
+    __table_args__ = (UniqueConstraint("source", "external_id", name="uq_media_source_external_id"),)
 
 
 class UserMedia(db.Model):
@@ -66,7 +66,7 @@ class UserMedia(db.Model):
     user: Mapped["User"] = relationship(back_populates="list_entries")
     media: Mapped["MediaWork"] = relationship(back_populates="list_entries")
 
-    __table_args__ = UniqueConstraint("user_id", "media_id", name="uq_user_media_user_id_media_id")
+    __table_args__ = (UniqueConstraint("user_id", "media_id", name="uq_user_media_user_id_media_id"),)
 
 
 @login_manager.user_loader

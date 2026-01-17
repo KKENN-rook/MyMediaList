@@ -1,9 +1,10 @@
 from flask import render_template, request, flash, redirect, url_for, abort, Blueprint
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 from flask_login import login_required, current_user
 
 from ..extensions import db
-from ..models import MediaItem
+from ..models import UserMedia, MediaWork
 
 # Valid Categories : Their page title
 CATEGORY_TITLES = {"books": "Books", "games": "Games", "shows": "Shows & Film"}
@@ -18,13 +19,18 @@ def media_list(category):
         abort(404)
 
     stmt = (
-        select(MediaItem)
-        .where(MediaItem.category == category, MediaItem.user_id == current_user.id)
-        .order_by(MediaItem.title)
+        select(UserMedia)
+        .join(UserMedia.media)
+        .where(
+            UserMedia.user_id == current_user.id,
+            MediaWork.category == category,
+        )
+        .options(selectinload(UserMedia.media))
+        .order_by(MediaWork.title)
     )
-    items = db.session.execute(stmt).scalars().all()
+    entries = db.session.execute(stmt).scalars().all()
 
-    return render_template("media_list.html", category=category, title=CATEGORY_TITLES[category], items=items)
+    return render_template("media_list.html", category=category, title=CATEGORY_TITLES[category], entries=entries)
 
 
 @bp.route("/add/<category>", methods=["POST"])
@@ -37,76 +43,72 @@ def add_entry(category):
     rating = int(request.form["rating"]) if request.form["rating"] else None  # returns "" if "-" option is selected
     status = request.form["status"]
     notes = request.form.get("notes") or None
+    progress_value = int(request.form.get("progress_value") or 0) or None
 
-    new_item = MediaItem(
-        title=title,
-        category=category,
+    if not title or not category or not status:
+        flash("Title, category, and status are required.")
+        return redirect(url_for("lists.media_list", category=category))
+
+    # Manual entry always adds a new MediaWork **Placeholder until APIs are implemented
+    media = MediaWork(title=title, category=category, source="manual")
+
+    new_entry = UserMedia(
+        user_id=current_user.id,
+        media=media,
         status=status,
         rating=rating,
         notes=notes,
-        user_id=current_user.id,
+        progress_value=progress_value,
     )
-    db.session.add(new_item)
+    db.session.add(new_entry)  # Cascades and saves media too due to the relationship
     db.session.commit()
 
     flash(f"Added '{title}' to your {CATEGORY_TITLES[category]} list.")
     return redirect(url_for("lists.media_list", category=category))
 
 
-@bp.route("/edit/<category>", methods=["POST"])
+@bp.route("/edit/<category>/<int:entry_id>", methods=["POST"])
 @login_required
-def edit_entry(category):
+def edit_entry(category, entry_id):
     if category not in CATEGORY_TITLES:
         abort(404)
 
-    old_title = request.form["old_title"]
+    entry = db.session.get(UserMedia, entry_id)
+    if entry is None or entry.user_id != current_user.id:
+        flash("Item not found or you don't have permission to edit it.")
+        return redirect(url_for("lists.media_list", category=category))
+
     title = request.form["title"]
     rating = int(request.form["rating"]) if request.form["rating"] else None
     status = request.form["status"]
     notes = request.form.get("notes") or None
+    progress_value = int(request.form.get("progress_value") or 0) or None
 
-    stmt = select(MediaItem).where(
-        MediaItem.category == category,
-        MediaItem.user_id == current_user.id,
-        MediaItem.title == old_title,
-    )
-    item = db.session.execute(stmt).scalars().first()
+    entry.media.title = title
+    entry.rating = rating
+    entry.status = status
+    entry.notes = notes
+    entry.progress_value = progress_value
 
-    if not item:
-        flash("Item not found or you don't have permission to edit it.")
-        return redirect(url_for("lists.media_list", category=category))
-
-    item.title = title
-    item.rating = rating
-    item.status = status
-    item.notes = notes
     db.session.commit()
-
     flash(f"Updated '{title}' in your {CATEGORY_TITLES[category]} list.")
     return redirect(url_for("lists.media_list", category=category))
 
 
-@bp.route("/delete/<category>", methods=["POST"])
+@bp.route("/delete/<category>/<int:entry_id>", methods=["POST"])
 @login_required
-def delete_entry(category):
+def delete_entry(category, entry_id):
     if category not in CATEGORY_TITLES:
         abort(404)
 
-    title = request.form["title"]
-
-    stmt = select(MediaItem).where(
-        MediaItem.category == category,
-        MediaItem.user_id == current_user.id,
-        MediaItem.title == title,
-    )
-    item = db.session.execute(stmt).scalars().first()
-
-    if not item:
+    entry = db.session.get(UserMedia, entry_id)
+    if entry is None or entry.user_id != current_user.id:
         flash("Item not found or you don't have permission to delete it.")
         return redirect(url_for("lists.media_list", category=category))
+    
+    title = entry.media.title # Capture the title to display it after delete
 
-    db.session.delete(item)
+    db.session.delete(entry)
     db.session.commit()
-
     flash(f"Deleted '{title}' from your {CATEGORY_TITLES[category]} list.")
     return redirect(url_for("lists.media_list", category=category))

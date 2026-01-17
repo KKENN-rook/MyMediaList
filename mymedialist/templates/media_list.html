@@ -34,19 +34,21 @@
         </tr>
     </thead>
     <tbody>
-        {% for item in items %}
-        <tr data-status="{{ item.status }}">
+        {% for entry in entries %}
+        <tr data-status="{{ entry.status }}">
             <td class="title-cell">
-                <span class="title-text">{{ item.title }}</span>
-                <button class="edit-btn" data-title="{{ item.title }}"
-                    data-rating="{{ item.rating if item.rating is not none else '' }}"
-                    data-status="{{ item.status }}" data-notes="{{ item.notes or '' }}">
+                <span class="title-text">{{ entry.media.title }}</span>
+                <button class="edit-btn" data-entry-id="{{ entry.id }}"
+                    data-title="{{ entry.media.title }}"
+                    data-rating="{{ entry.rating if entry.rating is not none else '' }}"
+                    data-status="{{ entry.status }}" data-notes="{{ entry.notes or '' }}"
+                    data-progress="{{ entry.progress_value if entry.progress_value is not none else '' }}">
                     Edit
                 </button>
             </td>
             <td>
-                {% if item.rating is not none %}
-                {{ item.rating }}
+                {% if entry.rating is not none %}
+                {{ entry.rating }}
                 {% else %}
                 -
                 {% endif %}
@@ -65,8 +67,8 @@
         <form id="entryForm" method="POST"
             action="{{ url_for('lists.add_entry', category=category) }}">
 
-            <!-- Hidden field to store the original title (used when editing an entry) -->
-            <input type="hidden" name="old_title" id="oldTitle">
+            <!-- Hidden field to get the entry_id-->
+            <input type="hidden" name="entry_id" id="entryId">
 
             <div>
                 <label for="title">Title:</label>
@@ -131,6 +133,10 @@
     const saveBtn = document.getElementById("saveBtn");
     const deleteBtn = document.getElementById("deleteBtn");
 
+    // Uses entry_id via url to edit/delete 
+    const editBase = "{{ url_for('lists.edit_entry', category=category, entry_id=0) }}".replace(/0$/, "");
+    const deleteBase = "{{ url_for('lists.delete_entry', category=category, entry_id=0) }}".replace(/0$/, "");
+
     // Add mode
     document.getElementById("addEntryBtn").addEventListener("click", () => {
         modalTitle.textContent = "Add New Entry";
@@ -145,15 +151,22 @@
     document.querySelectorAll(".edit-btn").forEach(btn => {
         btn.addEventListener("click", () => {
             modalTitle.textContent = "Edit Entry";
-            entryForm.action = "{{ url_for('lists.edit_entry', category=category) }}";
             saveBtn.textContent = "Save Changes";
             deleteBtn.style.display = "inline-block";
 
-            document.getElementById("oldTitle").value = btn.dataset.title;
+
+            const entryId = btn.dataset.entryId;
+            entryForm.action = editBase + entryId;
+
+            // Writes the entry ID into the hidden form input  
+            document.getElementById("entryId").value = entryId;
+
+            // Fill fields 
             document.getElementById("title").value = btn.dataset.title;
             document.getElementById("rating").value = btn.dataset.rating || "";
             document.getElementById("status").value = btn.dataset.status;
             document.getElementById("notes").value = btn.dataset.notes || "";
+            // document.getElementById("progress_value").value = btn.dataset.progress || "";
 
             modal.style.display = "block";
         });
@@ -167,7 +180,8 @@
     // Confirm delete
     deleteBtn.addEventListener("click", () => {
         if (confirm("Are you sure you want to delete this entry?")) {
-            entryForm.action = "{{ url_for('lists.delete_entry', category=category) }}";
+            const entryId = document.getElementById("entryId").value;
+            entryForm.action = deleteBase + entryId;
             entryForm.submit();
         }
     });
