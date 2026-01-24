@@ -42,15 +42,11 @@ document.querySelectorAll(".edit-btn").forEach(btn => {
         modalTitle.textContent = "Edit Entry";
         saveBtn.textContent = "Save Changes";
         deleteBtn.style.display = "inline-block";
-
-
         const entryId = btn.dataset.entryId;
-        entryForm.action = editBase + entryId;
-
-        // Writes the entry ID into the hidden form input  
-        document.getElementById("entryId").value = entryId;
+        entryForm.action = editUrl + entryId; 
 
         // Fill fields 
+        document.getElementById("entryId").value = entryId;  // Hidden field, used to assist in deleting correct entry
         document.getElementById("title").value = btn.dataset.title;
         document.getElementById("rating").value = btn.dataset.rating || "";
         document.getElementById("status").value = btn.dataset.status;
@@ -70,7 +66,7 @@ document.querySelectorAll(".close").forEach(el => el.addEventListener("click", (
 deleteBtn.addEventListener("click", () => {
     if (confirm("Are you sure you want to delete this entry?")) {
         const entryId = document.getElementById("entryId").value;
-        entryForm.action = deleteBase + entryId;
+        entryForm.action = deleteUrl + entryId;
         entryForm.submit();
     }
 });
