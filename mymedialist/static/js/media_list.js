@@ -19,11 +19,6 @@ const modalTitle = document.getElementById("modalTitle");
 const entryForm = document.getElementById("entryForm");
 const saveBtn = document.getElementById("saveBtn");
 const deleteBtn = document.getElementById("deleteBtn");
-
-// // Uses entry_id via url to edit/delete 
-// const editBase = "{{ url_for('lists.edit_entry', category=category, entry_id=0) }}".replace(/0$/, "");
-// const deleteBase = "{{ url_for('lists.delete_entry', category=category, entry_id=0) }}".replace(/0$/, "");
-
 const { editUrl, deleteUrl, addUrl } = window.MEDIA_LIST_CONFIG;
 
 // Add mode
