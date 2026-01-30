@@ -18,7 +18,7 @@
 
 <!-- Tabs for filtering by status -->
 <div class="tabs">
-    {% for status in ["All", "Completed", "In Progress", "Planned", "Dropped"] %}
+    {% for status in status_tabs %}
     <button class="tab {% if loop.first %}active{% endif %}" data-status="{{ status }}">
         {{ status }}
     </button>
@@ -90,10 +90,9 @@
             <div>
                 <label for="status">Status:</label>
                 <select id="status" name="status">
-                    <option value="In Progress">In Progress</option>
-                    <option value="Completed">Completed</option>
-                    <option value="Planned">Planned</option>
-                    <option value="Dropped">Dropped</option>
+                    {% for status in statuses %}
+                    <option value="{{ status }}">{{ status }}</option>
+                    {% endfor %}
                 </select>
             </div>
 
@@ -110,11 +109,11 @@
 </div>
 
 <script>
-  window.MEDIA_LIST_CONFIG = {
-    addUrl: "{{ url_for('lists.add_entry', category=category) }}",
-    editUrl: "{{ url_for('lists.edit_entry', category=category, entry_id=0) }}".replace(/0$/, ""),
-    deleteUrl: "{{ url_for('lists.delete_entry', category=category, entry_id=0) }}".replace(/0$/, "")
-  };
+    window.MEDIA_LIST_CONFIG = {
+        addUrl: "{{ url_for('lists.add_entry', category=category) }}",
+        editUrl: "{{ url_for('lists.edit_entry', category=category, entry_id=0) }}".replace(/0$/, ""),
+        deleteUrl: "{{ url_for('lists.delete_entry', category=category, entry_id=0) }}".replace(/0$/, "")
+    };
 </script>
 
 <script src="{{ url_for('static', filename='js/media_list.js') }}"></script>

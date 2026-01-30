@@ -5,9 +5,7 @@ from flask_login import login_required, current_user
 
 from ..extensions import db
 from ..models import UserMedia, MediaWork
-
-# Valid Categories : Their page title
-CATEGORY_TITLES = {"books": "Books", "games": "Games", "shows": "Shows & Film"}
+from ..shared_constants import CATEGORY_TITLES, STATUSES, STATUS_TABS
 
 bp = Blueprint("lists", __name__)
 
@@ -30,7 +28,13 @@ def media_list(category):
     )
     entries = db.session.execute(stmt).scalars().all()
 
-    return render_template("media_list.html", category=category, title=CATEGORY_TITLES[category], entries=entries)
+    return render_template(
+        "media_list.html", 
+        category=category, 
+        title=CATEGORY_TITLES[category], 
+        entries=entries,
+        status_tabs=STATUS_TABS,
+        statuses=STATUSES)
 
 
 @bp.route("/add/<category>", methods=["POST"])
