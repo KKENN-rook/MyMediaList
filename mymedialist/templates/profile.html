@@ -3,6 +3,21 @@
 
 {% block content %}
 <h1>{{ current_user.username.capitalize() }}'s Profile</h1>
+
+<h2>Your Stats</h2>
+
+{% for category, stats in stats_by_category.items() %}
+<h3>{{ category_titles[category] }}</h3>
+<ul>
+    <li>Mean Rating: {{ stats.avg_rating }}</li>
+    <li>Total: {{ stats.total }}</li>
+    <li>In Progress: {{ stats.status_counts["In Progress"] }}</li>
+    <li>Completed: {{ stats.status_counts["Completed"] }}</li>
+    <li>Dropped: {{ stats.status_counts["Dropped"] }}</li>
+    <li>Planned: {{ stats.status_counts["Planned"] }}</li>
+</ul>
+{% endfor %}
+
 <p>Need help? Begin by navigating to one of the lists at the top and add an entry!</p>
 <p>Stats to be implemented soon.</p>
 {% endblock %}
