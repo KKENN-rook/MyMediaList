@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 
 from ..extensions import db
 from ..services.stats import get_category_stats
-from ..shared_constants import CATEGORY_TITLES
+from ..shared_constants import CATEGORY_TITLES, STATUSES
 
 bp = Blueprint("main", __name__)
 
@@ -20,4 +20,6 @@ def profile():
 
     for category in CATEGORY_TITLES.keys():
         stats_by_category[category] = get_category_stats(db.session, user_id=current_user.id, category=category)
-    return render_template("profile.html", stats_by_category=stats_by_category, category_titles=CATEGORY_TITLES)
+    return render_template(
+        "profile.html", stats_by_category=stats_by_category, category_titles=CATEGORY_TITLES, statuses=STATUSES
+    )

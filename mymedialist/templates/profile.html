@@ -11,10 +11,9 @@
 <ul>
     <li>Mean Rating: {{ stats.avg_rating }}</li>
     <li>Total: {{ stats.total }}</li>
-    <li>In Progress: {{ stats.status_counts["In Progress"] }}</li>
-    <li>Completed: {{ stats.status_counts["Completed"] }}</li>
-    <li>Dropped: {{ stats.status_counts["Dropped"] }}</li>
-    <li>Planned: {{ stats.status_counts["Planned"] }}</li>
+    {% for status in statuses %}
+      <li>{{ status }}: {{ stats.status_counts.get(status, 0) }}</li>
+    {% endfor %}
 </ul>
 {% endfor %}
 
