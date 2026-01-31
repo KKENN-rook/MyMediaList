@@ -18,9 +18,11 @@
 
 <!-- Tabs for filtering by status -->
 <div class="tabs">
-    {% for status in status_tabs %}
-    <button class="tab {% if loop.first %}active{% endif %}" data-status="{{ status }}">
-        {{ status }}
+    <button class="tab active" data-status="all">All</button>
+
+    {% for key in statuses %}
+    <button class="tab" data-status="{{ key }}">
+        {{ status_labels[key] }}
     </button>
     {% endfor %}
 </div>
@@ -90,8 +92,8 @@
             <div>
                 <label for="status">Status:</label>
                 <select id="status" name="status">
-                    {% for status in statuses %}
-                    <option value="{{ status }}">{{ status }}</option>
+                    {% for key in statuses %}
+                    <option value="{{ key }}">{{ status_labels[key] }}</option>
                     {% endfor %}
                 </select>
             </div>

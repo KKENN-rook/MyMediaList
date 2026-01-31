@@ -8,7 +8,7 @@ tabs.forEach(tab => {
         tab.classList.add("active");
         const status = tab.dataset.status;
         rows.forEach(r => {
-            r.style.display = (status === "All" || r.dataset.status === status) ? "" : "none";
+            r.style.display = (status === "all" || r.dataset.status === status) ? "" : "none";
         });
     });
 });

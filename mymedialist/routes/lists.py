@@ -5,7 +5,7 @@ from flask_login import login_required, current_user
 
 from ..extensions import db
 from ..models import UserMedia, MediaWork
-from ..shared_constants import CATEGORY_TITLES, STATUSES, STATUS_TABS
+from ..shared_constants import CATEGORY_TITLES, STATUSES, get_status_labels
 
 bp = Blueprint("lists", __name__)
 
@@ -33,8 +33,8 @@ def media_list(category):
         category=category, 
         title=CATEGORY_TITLES[category], 
         entries=entries,
-        status_tabs=STATUS_TABS,
-        statuses=STATUSES)
+        statuses=STATUSES,
+        status_labels=get_status_labels(category))
 
 
 @bp.route("/add/<category>", methods=["POST"])
