@@ -7,13 +7,15 @@
 <h2>Your Stats</h2>
 
 {% for category, stats in stats_by_category.items() %}
+{% set category_labels = status_labels.get(category, status_labels["default"]) %}
 <h3>{{ category_titles[category] }}</h3>
 <ul>
-    <li>Mean Rating: {{ stats.avg_rating }}</li>
-    <li>Total: {{ stats.total }}</li>
-    {% for status in statuses %}
-      <li>{{ status }}: {{ stats.status_counts.get(status, 0) }}</li>
-    {% endfor %}
+  <li>Mean Rating: {{ stats.avg_rating }}</li>
+  <li>Total: {{ stats.total }}</li>
+
+  {% for status in statuses %}
+  <li>{{ category_labels[status] }}: {{ stats.status_counts.get(status, 0) }}</li>
+  {% endfor %}
 </ul>
 {% endfor %}
 

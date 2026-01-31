@@ -6,7 +6,7 @@ CATEGORY_TITLES = {
 
 CATEGORIES = list(CATEGORY_TITLES.keys())
 
-# Default keys are the actual values stored in the db; rest is for site-wide UI 
+# Default keys are the actual values stored in the db; rest is for site-wide flavor text
 STATUS_LABELS = {
     "default": {
         "in_progress": "In Progress",
