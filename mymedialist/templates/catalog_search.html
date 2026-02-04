@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Search results for "{{ q }}"</h2>
+
+{% if results %}
+<ul class="search-results">
+    {% for item in results %}
+    <li>
+        <strong>{{ item.title }}</strong>
+        {% if item.year %} ({{ item.year }}){% endif %}
+
+        {% if item.authors %}
+        <div>By {{ ", ".join(item.authors) }}</div>
+        {% endif %}
+
+        {% if item.image_url %}
+        <img src="{{ item.image_url }}" alt="cover" width="80">
+        {% endif %}
+
+        {% if item.description %}
+        <p>{{ item.description }}</p>
+        {% endif %}
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>No results.</p>
+{% endif %}
+
+{% endblock %}

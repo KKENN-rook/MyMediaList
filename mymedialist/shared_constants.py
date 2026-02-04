@@ -17,7 +17,7 @@ STATUS_LABELS = {
     },
     "books": {
         "in_progress": "Reading",
-        "completed": "Read",
+        "completed": "Completed",
         "on_hold": "On Hold",
         "planned": "Plan to Read",
         "dropped": "Dropped",

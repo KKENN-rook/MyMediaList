@@ -11,7 +11,7 @@
 <h3>{{ category_titles[category] }}</h3>
 <ul>
   <li>Mean Rating: {{ stats.avg_rating }}</li>
-  <li>Total: {{ stats.total }}</li>
+  <li>Total Entries: {{ stats.total }}</li>
 
   {% for status in statuses %}
   <li>{{ category_labels[status] }}: {{ stats.status_counts.get(status, 0) }}</li>
