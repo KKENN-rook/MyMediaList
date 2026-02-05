@@ -1,12 +1,14 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Search results for "{{ q }}"</h2>
+<h2>Search results for "{{ query }}"</h2>
 
 {% if results %}
 <ul class="search-results">
     {% for item in results %}
     <li>
-        <strong>{{ item.title }}</strong>
+        <a href="{{ url_for('catalog.get_details', category=category, external_id=item.external_id) }}">
+            {{ item.title }}
+        </a>
         {% if item.year %} ({{ item.year }}){% endif %}
 
         {% if item.authors %}

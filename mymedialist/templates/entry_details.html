@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ item.title }} | Details
+{% endblock %}
+
+{% block content %}
+<div class="entry-details">
+    <!-- Hero Section: Cover + Title -->
+    <div class="entry-hero">
+        <div class="entry-cover">
+            {% if item.image_url %}
+            <img src="{{ item.image_url }}" alt="Cover image for {{ item.title }}">
+            {% else %}
+            <div class="entry-cover-placeholder">No image available</div>
+            {% endif %}
+        </div>
+        
+        <div class="entry-header">
+            <h1 class="entry-title">{{ item.title }}</h1>
+        </div>
+    </div>
+
+    <!-- Synopsis Section -->
+    <section class="entry-synopsis-section">
+        <h2 class="section-title">Synopsis</h2>
+        {% if item.description %}
+        <div class="entry-synopsis">{{ item.description | safe  }}</div>
+        {% else %}
+        <p class="entry-synopsis entry-synopsis--empty">
+            No synopsis available.
+        </p>
+        {% endif %}
+    </section>
+
+    <!-- Metadata Section -->
+    <aside class="entry-metadata">
+        <h2 class="section-title">Details</h2>
+        <dl class="metadata-list">
+            {% if item.authors %}
+            <div class="metadata-item">
+                <dt class="metadata-label">Author{{ item.authors|length > 1 and 's' or '' }}</dt>
+                <dd class="metadata-value">{{ item.authors | join(", ") }}</dd>
+            </div>
+            {% endif %}
+            
+            {% if item.published_date %}
+            <div class="metadata-item">
+                <dt class="metadata-label">Published</dt>
+                <dd class="metadata-value">{{ item.published_date }}</dd>
+            </div>
+            {% endif %}
+            
+            {% if item.metadata.page_count %}
+            <div class="metadata-item">
+                <dt class="metadata-label">Pages</dt>
+                <dd class="metadata-value">{{ item.metadata.page_count }}</dd>
+            </div>
+            {% endif %}
+            
+            {% if item.metadata.categories %}
+            <div class="metadata-item">
+                <dt class="metadata-label">Genres</dt>
+                <dd class="metadata-value">{{ item.metadata.categories | join(", ") }}</dd>
+            </div>
+            {% endif %}
+        </dl>
+    </aside>
+</div>
+{% endblock %}

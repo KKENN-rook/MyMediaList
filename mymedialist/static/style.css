@@ -264,3 +264,14 @@ nav a.active {
 .edit-btn:hover {
     background-color: #3f947f;
 }
+
+/* Details Page */
+.entry-cover {
+    max-width: 300px;  /* Constrain the container */
+}
+
+.entry-cover img {
+    width: 100%;
+    height: auto;
+    display: block;  /* Change from inline to block */
+}
