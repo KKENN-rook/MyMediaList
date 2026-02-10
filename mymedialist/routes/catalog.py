@@ -58,12 +58,12 @@ def get_details(category: str, external_id: str):
     if category not in CATEGORY_TITLES:
         abort(404)
 
-    fetch_fn = DETAIL_FETCHERS.get(category)
-    if fetch_fn is None:
+    fetch_func = DETAIL_FETCHERS.get(category)
+    if fetch_func is None:
         abort(404)
 
     try:
-        item = fetch_fn(external_id)
+        item = fetch_func(external_id)
     except requests.exceptions.RequestException:
         flash("Could not load details right now. Please try again.")
         return redirect(request.referrer or url_for("catalog.search", category=category))
@@ -71,7 +71,4 @@ def get_details(category: str, external_id: str):
     if not item or not item.get("title"):
         abort(404)
 
-    # Ensure category is available to template even if service doesn't include it
-    item["category"] = category
-
-    return render_template("entry_details.html", item=item)
+    return render_template("entry_details.html", item=item, category=category)

@@ -111,6 +111,7 @@
 </div>
 
 <script>
+    // Necessary because JS can't call url_for to generate the url 
     window.MEDIA_LIST_CONFIG = {
         addUrl: "{{ url_for('lists.add_entry', category=category) }}",
         editUrl: "{{ url_for('lists.edit_entry', category=category, entry_id=0) }}".replace(/0$/, ""),

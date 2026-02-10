@@ -15,9 +15,10 @@
             <div class="entry-cover-placeholder">No image available</div>
             {% endif %}
         </div>
-        
+
         <div class="entry-header">
             <h1 class="entry-title">{{ item.title }}</h1>
+            <button id="addFromDetailsBtn">Add to List</button>
         </div>
     </div>
 
@@ -25,7 +26,7 @@
     <section class="entry-synopsis-section">
         <h2 class="section-title">Synopsis</h2>
         {% if item.description %}
-        <div class="entry-synopsis">{{ item.description | safe  }}</div>
+        <div class="entry-synopsis">{{ item.description | safe }}</div>
         {% else %}
         <p class="entry-synopsis entry-synopsis--empty">
             No synopsis available.
@@ -43,21 +44,21 @@
                 <dd class="metadata-value">{{ item.authors | join(", ") }}</dd>
             </div>
             {% endif %}
-            
+
             {% if item.published_date %}
             <div class="metadata-item">
                 <dt class="metadata-label">Published</dt>
                 <dd class="metadata-value">{{ item.published_date }}</dd>
             </div>
             {% endif %}
-            
+
             {% if item.metadata.page_count %}
             <div class="metadata-item">
                 <dt class="metadata-label">Pages</dt>
                 <dd class="metadata-value">{{ item.metadata.page_count }}</dd>
             </div>
             {% endif %}
-            
+
             {% if item.metadata.categories %}
             <div class="metadata-item">
                 <dt class="metadata-label">Genres</dt>
@@ -67,4 +68,59 @@
         </dl>
     </aside>
 </div>
+
+<!-- Entry Modal (Add only) -->
+<div id="entryModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 id="modalTitle">Add New Entry</h2>
+        <p class="privacy-note">*Your list is private by default.</p>
+
+        <form id="entryForm" method="POST"
+            action="{{ url_for('lists.add_entry', category=item.category) }}">
+
+            <div>
+                <label for="title">Title:</label>
+                <input type="text" id="title" name="title" required>
+            </div>
+
+            <div>
+                <label for="rating">Rating (1-10):</label>
+                <select id="rating" name="rating">
+                    <option value="">-</option>
+                    {% for i in range(1, 11) %}
+                    <option value="{{ i }}">{{ i }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label for="status">Status:</label>
+                <select id="status" name="status">
+                    {% for status, label in status_labels[category].items() %}
+                    <option value="{{ status }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label for="notes">Notes (optional)</label>
+                <textarea id="notes" name="notes" rows="3"></textarea>
+            </div>
+
+            <div class="form-buttons">
+                <button type="submit" id="saveBtn">Add Entry</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    window.ENTRY_DETAILS_CONFIG = {
+        title: {{ item.title | tojson }}
+  };
+</script>
+
+<script src="{{ url_for('static', filename='js/entry_details.js') }}"></script>
+
 {% endblock %}
