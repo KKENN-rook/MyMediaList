@@ -6,10 +6,7 @@ const titleInput = document.getElementById("title");
 document.getElementById("addFromDetailsBtn").addEventListener("click", () => {
   modalTitle.textContent = "Add New Entry";
   entryForm.reset();
-
-  // Prefill title from details page
   titleInput.value = window.ENTRY_DETAILS_CONFIG.title;
-
   modal.style.display = "block";
 });
 

@@ -111,15 +111,6 @@ def get_book_details(external_id: str) -> dict:
         or image_links.get("small")
     )
 
-    # Google Books may return "publisher/content" cover URLs that render as placeholders
-    # or non-decodable images when embedded. Fall back to the stable public
-    # "books/content" endpoint to ensure a valid, embeddable cover image.
-    if not image_url or "/publisher/content" in image_url:
-        image_url = (
-            f"https://books.google.com/books/content?"
-            f"id={external_id}&printsec=frontcover&img=1&zoom=3&source=gbs_api"
-        )
-
     description = info.get("description")
     metadata = {
         "publisher": info.get("publisher"),
@@ -135,6 +126,8 @@ def get_book_details(external_id: str) -> dict:
         "published_date": published_date,
         "image_url": image_url,
         "description": description,
+        "total_units": info.get("pageCount"),
+        "unit_type": "pages",
         "metadata": metadata,
     }
 

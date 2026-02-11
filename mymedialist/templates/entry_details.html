@@ -77,11 +77,27 @@
         <p class="privacy-note">*Your list is private by default.</p>
 
         <form id="entryForm" method="POST"
-            action="{{ url_for('lists.add_entry', category=item.category) }}">
+            action="{{ url_for('lists.add_entry', category=category) }}">
 
             <div>
                 <label for="title">Title:</label>
                 <input type="text" id="title" name="title" required>
+            </div>
+
+            <div>
+                <label for="status">Status:</label>
+                <select id="status" name="status">
+                    {% for status, label in status_labels[category].items() %}
+                    <option value="{{ status }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label for="progress_value">{{ item.unit_type | capitalize }}:</label>
+                <input type="number" id="progress_value" name="progress_value" min="0"
+                    max="{{ item.total_units }}" step="1" placeholder="0">
+                <span>/ {{ item.total_units }}</span>
             </div>
 
             <div>
@@ -95,15 +111,6 @@
             </div>
 
             <div>
-                <label for="status">Status:</label>
-                <select id="status" name="status">
-                    {% for status, label in status_labels[category].items() %}
-                    <option value="{{ status }}">{{ label }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <div>
                 <label for="notes">Notes (optional)</label>
                 <textarea id="notes" name="notes" rows="3"></textarea>
             </div>
@@ -111,11 +118,17 @@
             <div class="form-buttons">
                 <button type="submit" id="saveBtn">Add Entry</button>
             </div>
+            <input type="hidden" name="next" value="{{ request.path }}">
+            <input type="hidden" name="source" value="{{ item.source }}">
+            <input type="hidden" name="external_id" value="{{ item.external_id }}">
         </form>
     </div>
 </div>
 
 <script>
+    // Variables can be modified by filters. 
+    // Filters are separated from the variable by a pipe symbol (|)
+    // tojson safely serializes Python data into JavaScript (handles escaping)
     window.ENTRY_DETAILS_CONFIG = {
         title: {{ item.title | tojson }}
   };

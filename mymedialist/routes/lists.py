@@ -1,5 +1,6 @@
 from flask import render_template, request, flash, redirect, url_for, abort, Blueprint
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import selectinload
 from flask_login import login_required, current_user
 
@@ -29,12 +30,13 @@ def media_list(category):
     entries = db.session.execute(stmt).scalars().all()
 
     return render_template(
-        "media_list.html", 
-        category=category, 
-        title=CATEGORY_TITLES[category], 
+        "media_list.html",
+        category=category,
+        title=CATEGORY_TITLES[category],
         entries=entries,
         statuses=STATUSES,
-        status_labels=get_status_labels(category))
+        status_labels=get_status_labels(category),
+    )
 
 
 @bp.route("/add/<category>", methods=["POST"])
@@ -44,18 +46,47 @@ def add_entry(category):
         abort(404)
 
     title = request.form["title"].strip()
-    rating = int(request.form["rating"]) if request.form["rating"] else None  # returns "" if "-" option is selected
+    rating = int(request.form["rating"]) if request.form.get("rating") else None  # returns "" if "-" option is selected
     status = request.form["status"]
     notes = request.form.get("notes") or None
-    progress_value = int(request.form.get("progress_value") or 0) or None
+    progress_value = int(request.form["progress_value"]) if request.form.get("progress_value") else None
+    # API values
+    source = (request.form.get("source") or "manual").strip()
+    external_id = (request.form.get("external_id") or "").strip() or None
+    total_units = int(request.form["total_units"]) if request.form.get("total_units") else None
+    unit_type = (request.form.get("unit_type") or "").strip() or None
 
     if not title or not category or not status:
         flash("Title, category, and status are required.")
         return redirect(url_for("lists.media_list", category=category))
+    # Get or create MediaWork
+    if source != "manual" and external_id:
+        stmt = select(MediaWork).where(
+            MediaWork.source == source,
+            MediaWork.external_id == external_id,
+        )
+        media = db.session.execute(stmt).scalar_one_or_none()
 
-    # Manual entry always adds a new MediaWork **Placeholder until APIs are implemented
-    media = MediaWork(title=title, category=category, source="manual")
+        if media is None:
+            media = MediaWork(
+                title=title,
+                category=category,
+                source=source,
+                external_id=external_id,
+                total_units=total_units,
+                unit_type=unit_type,
+            )
+            db.session.add(media)
+    else:
+        media = MediaWork(title=title, category=category, source="manual")
+        db.session.add(media)
 
+    if progress_value is not None and media.total_units is not None:
+        if not (0 <= progress_value <= media.total_units):
+            flash("Invalid progress value.")
+            return redirect(url_for("lists.media_list", category=category))
+
+    # Create UserMedia
     new_entry = UserMedia(
         user_id=current_user.id,
         media=media,
@@ -64,11 +95,17 @@ def add_entry(category):
         notes=notes,
         progress_value=progress_value,
     )
-    db.session.add(new_entry)  # Cascades and saves media too due to the relationship
-    db.session.commit()
+    db.session.add(new_entry)
 
-    flash(f"Added '{title}' to your {CATEGORY_TITLES[category]} list.")
-    return redirect(url_for("lists.media_list", category=category))
+    try:
+        db.session.commit()
+        flash(f"Added '{media.title}' to your {CATEGORY_TITLES[category]} list.")
+    except IntegrityError:
+        db.session.rollback()
+        flash("That item is already in your list.")
+
+    next_url = request.form.get("next")
+    return redirect(next_url or url_for("lists.media_list", category=category))
 
 
 @bp.route("/edit/<category>/<int:entry_id>", methods=["POST"])
@@ -109,8 +146,8 @@ def delete_entry(category, entry_id):
     if entry is None or entry.user_id != current_user.id:
         flash("Item not found or you don't have permission to delete it.")
         return redirect(url_for("lists.media_list", category=category))
-    
-    title = entry.media.title # Capture the title to display it after delete
+
+    title = entry.media.title  # Capture the title to display it after delete
 
     db.session.delete(entry)
     db.session.commit()
