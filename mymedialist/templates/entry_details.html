@@ -18,7 +18,11 @@
 
         <div class="entry-header">
             <h1 class="entry-title">{{ item.title }}</h1>
+            {% if user_entry %}
+            <button id="editFromDetailsBtn">Edit Entry</button>
+            {% else %}
             <button id="addFromDetailsBtn">Add to List</button>
+            {% endif %}
         </div>
     </div>
 
@@ -119,19 +123,30 @@
                 <button type="submit" id="saveBtn">Add Entry</button>
             </div>
             <input type="hidden" name="next" value="{{ request.path }}">
-            <input type="hidden" name="source" value="{{ item.source }}">
-            <input type="hidden" name="external_id" value="{{ item.external_id }}">
+            <input type="hidden" id="sourceField" name="source" value="{{ item.source }}">
+            <input type="hidden" id="external_idField" name="external_id"
+                value="{{ item.external_id }}">
+            <input type="hidden" id="total_unitsField" name="total_units"
+                value="{{ item.total_units or '' }}">
+            <input type="hidden" id="unit_typeField" name="unit_type"
+                value="{{ item.unit_type or '' }}">
         </form>
     </div>
 </div>
 
-<script>
-    // Variables can be modified by filters. 
-    // Filters are separated from the variable by a pipe symbol (|)
-    // tojson safely serializes Python data into JavaScript (handles escaping)
-    window.ENTRY_DETAILS_CONFIG = {
-        title: {{ item.title | tojson }}
-  };
+<script type="application/json" id="entry-details-config">
+  {{ {
+    "title": item.title,
+    "category": category,
+    "userEntryId": user_entry.id if user_entry else None,
+    "userEntryData": {
+      "title": user_entry.media.title,
+      "status": user_entry.status,
+      "rating": user_entry.rating,
+      "notes": user_entry.notes,
+      "progress_value": user_entry.progress_value,
+    } if user_entry else None
+  } | tojson }}
 </script>
 
 <script src="{{ url_for('static', filename='js/entry_details.js') }}"></script>

@@ -44,7 +44,9 @@
                     data-title="{{ entry.media.title }}"
                     data-rating="{{ entry.rating if entry.rating is not none else '' }}"
                     data-status="{{ entry.status }}" data-notes="{{ entry.notes or '' }}"
-                    data-progress="{{ entry.progress_value if entry.progress_value is not none else '' }}">
+                    data-progress="{{ entry.progress_value or '' }}"
+                    data-total-units="{{ entry.media.total_units or '' }}"
+                    data-unit-type="{{ entry.media.unit_type or '' }}">
                     Edit
                 </button>
             </td>
