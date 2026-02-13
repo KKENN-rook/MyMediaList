@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 from sqlalchemy import select
 import requests
 
+from mymedialist.services.games_api import search_games
 from mymedialist.services.books_api import search_books, get_book_details
 from mymedialist.shared_constants import CATEGORY_TITLES, CATEGORIES
 from mymedialist.models import MediaWork, UserMedia
@@ -14,7 +15,7 @@ bp = Blueprint("catalog", __name__, url_prefix="/catalog")
 
 SEARCHERS = {
     "books": search_books,
-    # "games": search_games,
+    "games": search_games,
     # "shows": search_shows,
 }
 

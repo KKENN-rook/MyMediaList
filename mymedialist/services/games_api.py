@@ -38,6 +38,7 @@ def search_games(query: str, max_results: int = 10) -> list[dict[str, Any]]:
             "fields id,name,first_release_date,summary,cover.image_id;",
             f'search "{_escape_igdb_search(query)}";',
             f"limit {int(max_results)};",
+            f"where version_parent = null;",
         ]
     )
 
@@ -50,11 +51,9 @@ def search_games(query: str, max_results: int = 10) -> list[dict[str, Any]]:
         if not game_id or not title:
             continue
 
-
         cover = item.get("cover") or {}
         image_id = cover.get("image_id")
         image_url = _cover_url(image_id, size="t_thumb")
-
         description = _shorten(item.get("summary"), 400)
 
         results.append(
@@ -62,7 +61,6 @@ def search_games(query: str, max_results: int = 10) -> list[dict[str, Any]]:
                 "source": SOURCE,
                 "external_id": game_id,
                 "title": title,
-                "year": year,
                 "image_url": image_url,
                 "description": description,
             }
@@ -118,7 +116,7 @@ def _igdb_post_json(resource: str, body: str) -> Any:
     resource: e.g. "games"
     body: IGDB query body string
     """
-    token = _get_app_access_token()
+    token = _get_twitch_access_token()
 
     url = f"{IGDB_API_BASE}/{resource}"
     headers = {

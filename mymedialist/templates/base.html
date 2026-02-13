@@ -16,15 +16,17 @@
         <a href="{{ url_for('lists.media_list', category='games') }}">Games</a>
         <a href="{{ url_for('lists.media_list', category='shows') }}">Shows & Films</a>
         <a href="{{ url_for('auth.logout') }}">Logout</a>
+
         <form method="get" action="{{ url_for('catalog.search') }}" class="nav-search">
+            {% set current_category = request.args.get("category", "books") %}
             <select name="category">
                 {% for key in categories %}
-                <option value="{{ key }}">{{ category_titles[key] }}</option>
+                <option value="{{ key }}" {{ "selected" if key==current_category else "" }}>
+                    {{ category_titles[key] }}
+                </option>
                 {% endfor %}
             </select>
-
             <input type="text" name="q" placeholder="Search titles..." required>
-
             <button type="submit">Search</button>
         </form>
     </nav>
