@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 from sqlalchemy import select
 import requests
 
-from mymedialist.services.games_api import search_games
+from mymedialist.services.games_api import search_games, get_game_details
 from mymedialist.services.books_api import search_books, get_book_details
 from mymedialist.shared_constants import CATEGORY_TITLES, CATEGORIES
 from mymedialist.models import MediaWork, UserMedia
@@ -21,7 +21,7 @@ SEARCHERS = {
 
 DETAIL_FETCHERS = {
     "books": get_book_details,
-    # "games": get_game_details,
+    "games": get_game_details,
     # "shows": get_show_details,
 }
 

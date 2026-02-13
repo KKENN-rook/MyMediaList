@@ -69,6 +69,77 @@ def search_games(query: str, max_results: int = 10) -> list[dict[str, Any]]:
     return results
 
 
+def get_game_details(external_id: str | int) -> dict[str, Any]:
+    """
+    Fetch full details for a specific IGDB game and return normalized results.
+
+    Args:
+        external_id: IGDB game ID
+    """
+    if external_id is None:
+        raise ValueError("external_id is required")
+
+    external_id_str = str(external_id).strip()
+    if not external_id_str.isdigit():
+        raise ValueError("external_id must be an IGDB numeric id")
+
+    game_id = int(external_id_str)
+
+    body = "\n".join(
+        [
+            "fields id,name,summary,storyline,first_release_date,cover.image_id,"
+            "genres.name,platforms.name,involved_companies.company.name;",
+            f"where id = {game_id};",
+            "limit 1;",
+        ]
+    )
+
+    items = _igdb_post_json("games", body)
+    if not items:
+        raise ValueError(f"IGDB game not found for external_id={game_id}")
+
+    item = items[0]
+
+    title = item.get("name")
+    summary = item.get("summary")
+    storyline = item.get("storyline")
+    first_release_date = item.get("first_release_date")
+
+    # Prefer storyline if available; fall back to summary
+    description = storyline or summary
+
+    cover = item.get("cover") or {}
+    image_id = cover.get("image_id")
+    image_url = _cover_url(image_id, size="t_cover_big")
+
+    genres = [g.get("name") for g in (item.get("genres") or []) if g.get("name")]
+    platforms = [p.get("name") for p in (item.get("platforms") or []) if p.get("name")]
+
+    # involved_companies is an array like: {"company": {"name": "..."}}
+    companies = []
+    for ic in item.get("involved_companies") or []:
+        company = (ic.get("company") or {}).get("name")
+        if company:
+            companies.append(company)
+
+    metadata = {
+        "genres": genres,
+        "platforms": platforms,
+        "companies": companies,
+    }
+
+    return {
+        "source": SOURCE,
+        "external_id": game_id,
+        "title": title,
+        "image_url": image_url,
+        "description": description,
+        "total_units": 1,
+        "unit_type": "unit",
+        "metadata": metadata,
+    }
+
+
 # ================================
 # Helper funcs
 # ================================
