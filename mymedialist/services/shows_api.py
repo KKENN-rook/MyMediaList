@@ -4,12 +4,10 @@ from typing import Any, Dict, List, Optional, Tuple
 import requests
 
 SOURCE = "tmdb"
-
 TMDB_API_BASE = "https://api.themoviedb.org/3"
 IMAGE_BASE = "https://image.tmdb.org/t/p/"
 POSTER_SIZE_LIST = "w342"     # Obtained from https://developer.themoviedb.org/reference/configuration-details
 POSTER_SIZE_DETAILS = "w500"
-
 TMDB_ACCESS_TOKEN = os.getenv("TMDB_ACCESS_TOKEN")
 
 
@@ -66,7 +64,7 @@ def _build_image_url(poster_path: Optional[str], *, size: str) -> Optional[str]:
 
 def _normalize_multi_result(item: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     """
-    Normalize a TMDb /search/multi result into the internal media format.
+    Normalize a TMDb /search/multi result into project standard format. 
 
     Returns:
         Normalized media dictionary or None if unsupported media type.
