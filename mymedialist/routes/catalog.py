@@ -5,6 +5,7 @@ import requests
 
 from mymedialist.services.games_api import search_games, get_game_details
 from mymedialist.services.books_api import search_books, get_book_details
+from mymedialist.services.shows_api import search_shows, get_show_details
 from mymedialist.shared_constants import CATEGORY_TITLES, CATEGORIES
 from mymedialist.models import MediaWork, UserMedia
 from mymedialist.extensions import db
@@ -16,13 +17,13 @@ bp = Blueprint("catalog", __name__, url_prefix="/catalog")
 SEARCHERS = {
     "books": search_books,
     "games": search_games,
-    # "shows": search_shows,
+    "shows": search_shows,
 }
 
 DETAIL_FETCHERS = {
     "books": get_book_details,
     "games": get_game_details,
-    # "shows": get_show_details,
+    "shows": get_show_details,
 }
 
 

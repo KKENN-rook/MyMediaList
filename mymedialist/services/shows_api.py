@@ -6,7 +6,7 @@ import requests
 SOURCE = "tmdb"
 TMDB_API_BASE = "https://api.themoviedb.org/3"
 IMAGE_BASE = "https://image.tmdb.org/t/p/"
-POSTER_SIZE_LIST = "w342"     # Obtained from https://developer.themoviedb.org/reference/configuration-details
+POSTER_SIZE_LIST = "w342"  # Obtained from https://developer.themoviedb.org/reference/configuration-details
 POSTER_SIZE_DETAILS = "w500"
 TMDB_ACCESS_TOKEN = os.getenv("TMDB_ACCESS_TOKEN")
 
@@ -64,7 +64,7 @@ def _build_image_url(poster_path: Optional[str], *, size: str) -> Optional[str]:
 
 def _normalize_multi_result(item: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     """
-    Normalize a TMDb /search/multi result into project standard format. 
+    Normalize a TMDb /search/multi result into project standard format.
 
     Returns:
         Normalized media dictionary or None if unsupported media type.
@@ -152,7 +152,7 @@ def _parse_external_id(external_id: str) -> Optional[Tuple[str, str]]:
     return media_type, raw_id
 
 
-def get_show_or_movie_details(external_id: str) -> Optional[Dict[str, Any]]:
+def get_show_details(external_id: str) -> Optional[Dict[str, Any]]:
     """
     Retrieve detailed metadata for a TV series or movie.
 
@@ -190,7 +190,7 @@ def get_show_or_movie_details(external_id: str) -> Optional[Dict[str, Any]]:
             "description": data.get("overview") or None,
             "total_units": total_units,
             "unit_type": "episodes",
-            "meta": {
+            "metadata": {
                 "media_type": "tv",
                 "number_of_seasons": data.get("number_of_seasons"),
                 "status": data.get("status"),
@@ -213,7 +213,7 @@ def get_show_or_movie_details(external_id: str) -> Optional[Dict[str, Any]]:
         "description": data.get("overview") or None,
         "total_units": 1,
         "unit_type": "entries",
-        "meta": {
+        "metadata": {
             "media_type": "movie",
             "status": data.get("status"),
             "genres": [g["name"] for g in (data.get("genres") or []) if g.get("name")],
