@@ -154,17 +154,18 @@ def _parse_external_id(external_id: str) -> Optional[Tuple[str, str]]:
 
 def get_show_details(external_id: str) -> Optional[Dict[str, Any]]:
     """
-    Retrieve detailed metadata for a TV series or movie.
+    Retrieve detailed metadata for a TV series or movie from TMDb.
 
-    Progress Model:
-        TV     → total_units = number_of_episodes
-        Movie  → total_units = 1
+    Detail fields returned for UI:
+      - episode_count
+      - avg_runtime_minutes
+      - aired_start
+      - aired_end
+      - genres
 
-    Args:
-        external_id: Prefixed identifier (e.g., 'tv:123', 'movie:456').
-
-    Returns:
-        Normalized detail dictionary or None on failure.
+    Progress model:
+      - TV: total_units = number_of_episodes, unit_type = "episodes"
+      - Movie: total_units = 1, unit_type = "entries"
     """
     parsed = _parse_external_id(external_id)
     if not parsed:
@@ -177,45 +178,82 @@ def get_show_details(external_id: str) -> Optional[Dict[str, Any]]:
         if not data:
             return None
 
-        total_units = data.get("number_of_episodes")
-        total_units = int(total_units) if isinstance(total_units, int) else None
+        episode_count = data.get("number_of_episodes")
+        episode_count = int(episode_count) if isinstance(episode_count, int) else None
+
+        run_times = data.get("episode_run_time") or []
+        avg_runtime = None
+        if isinstance(run_times, list) and run_times:
+            nums = [rt for rt in run_times if isinstance(rt, int)]
+            if nums:
+                avg_runtime = round(sum(nums) / len(nums))
+
+        genres = [g["name"] for g in (data.get("genres") or []) if g.get("name")]
+
+        aired_start = data.get("first_air_date") or None
+        aired_end = data.get("last_air_date") or None
 
         return {
             "source": SOURCE,
             "external_id": external_id,
             "title": (data.get("name") or "").strip(),
             "authors": [],
-            "year": _year_from_date(data.get("first_air_date")),
+            "year": _year_from_date(aired_start),
             "image_url": _build_image_url(data.get("poster_path"), size=POSTER_SIZE_DETAILS),
             "description": data.get("overview") or None,
-            "total_units": total_units,
+
+            # progress fields
+            "total_units": episode_count,
             "unit_type": "episodes",
+
+            # UI detail fields
+            "episode_count": episode_count,
+            "avg_runtime_minutes": avg_runtime,
+            "aired_start": aired_start,
+            "aired_end": aired_end,
+            "genres": genres,
+
             "metadata": {
                 "media_type": "tv",
                 "number_of_seasons": data.get("number_of_seasons"),
                 "status": data.get("status"),
-                "genres": [g["name"] for g in (data.get("genres") or []) if g.get("name")],
             },
         }
 
-    # Movie branch
+    # movie
     data = _tmdb_get(f"/movie/{raw_id}")
     if not data:
         return None
+
+    runtime = data.get("runtime")
+    runtime = int(runtime) if isinstance(runtime, int) else None
+
+    genres = [g["name"] for g in (data.get("genres") or []) if g.get("name")]
+
+    release_date = data.get("release_date") or None
 
     return {
         "source": SOURCE,
         "external_id": external_id,
         "title": (data.get("title") or "").strip(),
         "authors": [],
-        "year": _year_from_date(data.get("release_date")),
+        "year": _year_from_date(release_date),
         "image_url": _build_image_url(data.get("poster_path"), size=POSTER_SIZE_DETAILS),
         "description": data.get("overview") or None,
+
+        # progress fields
         "total_units": 1,
         "unit_type": "entries",
+
+        # UI detail fields (movie = 1 “episode”)
+        "episode_count": 1,
+        "avg_runtime_minutes": runtime,
+        "aired_start": release_date,
+        "aired_end": None,
+        "genres": genres,
+
         "metadata": {
             "media_type": "movie",
             "status": data.get("status"),
-            "genres": [g["name"] for g in (data.get("genres") or []) if g.get("name")],
         },
     }

@@ -3,37 +3,31 @@ const modalTitle = document.getElementById("modalTitle");
 const entryForm = document.getElementById("entryForm");
 const titleInput = document.getElementById("title");
 const statusInput = document.getElementById("status");
-const progressInput = document.getElementById("progress_value");
+const progressInput = document.getElementById("progress_value"); // may be null
 const ratingInput = document.getElementById("rating");
 const notesInput = document.getElementById("notes");
 const saveBtn = document.getElementById("saveBtn");
 
 const config = JSON.parse(document.getElementById("entry-details-config").textContent);
 
-// Handle Edit button click
 const editBtn = document.getElementById("editFromDetailsBtn");
-if (editBtn) {
-  editBtn.addEventListener("click", () => {
-    openEditModal();
-  });
-}
+if (editBtn) editBtn.addEventListener("click", openEditModal);
 
-// Handle Add button click
 const addBtn = document.getElementById("addFromDetailsBtn");
-if (addBtn) {
-  addBtn.addEventListener("click", () => {
-    openAddModal();
-  });
-}
+if (addBtn) addBtn.addEventListener("click", openAddModal);
 
 function openAddModal() {
   modalTitle.textContent = "Add New Entry";
   entryForm.action = `/add/${config.category}`;
   entryForm.reset();
+
   titleInput.value = config.title;
   saveBtn.textContent = "Add Entry";
 
-  // Show hidden fields for add mode
+  // If progress exists, clear it explicitly (reset() should, but keep consistent)
+  if (progressInput) progressInput.value = "";
+
+  // Enable API fields for add mode
   document.getElementById("sourceField").disabled = false;
   document.getElementById("external_idField").disabled = false;
   document.getElementById("total_unitsField").disabled = false;
@@ -46,16 +40,20 @@ function openEditModal() {
   modalTitle.textContent = "Edit Entry";
   entryForm.action = `/edit/${config.category}/${config.userEntryId}`;
 
-  // Pre-fill form with existing data
   titleInput.value = config.userEntryData.title;
   statusInput.value = config.userEntryData.status;
-  progressInput.value = config.userEntryData.progress_value || "";
-  ratingInput.value = config.userEntryData.rating || "";
-  notesInput.value = config.userEntryData.notes || "";
+
+  // Progress is optional now
+  if (progressInput) {
+    progressInput.value = config.userEntryData.progress_value ?? "";
+  }
+
+  ratingInput.value = config.userEntryData.rating ?? "";
+  notesInput.value = config.userEntryData.notes ?? "";
 
   saveBtn.textContent = "Update Entry";
 
-  // Hide hidden fields for edit mode (API-specific fields)
+  // Disable API fields for edit mode
   document.getElementById("sourceField").disabled = true;
   document.getElementById("external_idField").disabled = true;
   document.getElementById("total_unitsField").disabled = true;
@@ -64,10 +62,10 @@ function openEditModal() {
   modal.style.display = "block";
 }
 
-document.querySelectorAll(".close").forEach(el =>
+document.querySelectorAll(".close").forEach((el) =>
   el.addEventListener("click", () => (modal.style.display = "none"))
 );
 
-window.addEventListener("click", e => {
+window.addEventListener("click", (e) => {
   if (e.target === modal) modal.style.display = "none";
 });

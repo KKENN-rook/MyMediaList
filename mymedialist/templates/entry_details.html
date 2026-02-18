@@ -6,7 +6,7 @@
 
 {% block content %}
 <div class="entry-details">
-    <!-- Hero Section: Cover + Title -->
+    <!-- Hero Section -->
     <div class="entry-hero">
         <div class="entry-cover">
             {% if item.image_url %}
@@ -26,22 +26,22 @@
         </div>
     </div>
 
-    <!-- Synopsis Section -->
+    <!-- Synopsis -->
     <section class="entry-synopsis-section">
         <h2 class="section-title">Synopsis</h2>
         {% if item.description %}
         <div class="entry-synopsis">{{ item.description | safe }}</div>
         {% else %}
-        <p class="entry-synopsis entry-synopsis--empty">
-            No synopsis available.
-        </p>
+        <p class="entry-synopsis entry-synopsis--empty">No synopsis available.</p>
         {% endif %}
     </section>
 
-    <!-- Metadata Section -->
+    <!-- Details -->
     <aside class="entry-metadata">
         <h2 class="section-title">Details</h2>
         <dl class="metadata-list">
+
+            {# Books: Authors #}
             {% if item.authors %}
             <div class="metadata-item">
                 <dt class="metadata-label">Author{{ item.authors|length > 1 and 's' or '' }}</dt>
@@ -49,6 +49,7 @@
             </div>
             {% endif %}
 
+            {# Books: Published date #}
             {% if item.published_date %}
             <div class="metadata-item">
                 <dt class="metadata-label">Published</dt>
@@ -56,6 +57,21 @@
             </div>
             {% endif %}
 
+            {# TV/Movie: Aired / Released #}
+            {% if item.aired_start %}
+            <div class="metadata-item">
+                <dt class="metadata-label">
+                    {% if item.meta and item.meta.media_type == "movie" %}Released{% else %}Aired{%
+                    endif %}
+                </dt>
+                <dd class="metadata-value">
+                    {{ item.aired_start }}
+                    {% if item.aired_end %} – {{ item.aired_end }}{% endif %}
+                </dd>
+            </div>
+            {% endif %}
+
+            {# Units: Show only for meaningful unit types (pages/episodes) #}
             {% if item.unit_type in ["pages", "episodes"] and item.total_units %}
             <div class="metadata-item">
                 <dt class="metadata-label">{{ item.unit_type.capitalize() }}</dt>
@@ -63,29 +79,48 @@
             </div>
             {% endif %}
 
-            {% if item.metadata.categories %}
+            {# TV/Movie: Avg runtime #}
+            {% if item.avg_runtime_minutes %}
             <div class="metadata-item">
-                <dt class="metadata-label">Genres</dt>
-                <dd class="metadata-value">{{ item.metadata.categories | join(", ") }}</dd>
+                <dt class="metadata-label">
+                    {% if item.meta and item.meta.media_type == "movie" %}Runtime{% else %}Avg
+                    Runtime{% endif %}
+                </dt>
+                <dd class="metadata-value">{{ item.avg_runtime_minutes }} min</dd>
             </div>
             {% endif %}
+
+            {# Genres: prefer item.genres (TMDb), fallback to metadata.categories (Books) #}
+            {% set genres = item.genres if item.genres is defined and item.genres else
+            (item.metadata.categories if item.metadata is defined and item.metadata.categories else
+            None) %}
+            {% if genres %}
+            <div class="metadata-item">
+                <dt class="metadata-label">Genres</dt>
+                <dd class="metadata-value">{{ genres | join(", ") }}</dd>
+            </div>
+            {% endif %}
+
         </dl>
     </aside>
 </div>
 
-<!-- Entry Modal (Add only) -->
+<!-- Entry Modal -->
 <div id="entryModal" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>
-        <h2 id="modalTitle">Add New Entry</h2>
+        <h2 id="modalTitle">{% if user_entry %}Edit Entry{% else %}Add New Entry{% endif %}</h2>
         <p class="privacy-note">*Your list is private by default.</p>
 
-        <form id="entryForm" method="POST"
-            action="{{ url_for('lists.add_entry', category=category) }}">
+        <form id="entryForm" method="POST" action="{% if user_entry %}
+                        {{ url_for('lists.edit_entry', category=category, entry_id=user_entry.id) }}
+                      {% else %}
+                        {{ url_for('lists.add_entry', category=category) }}
+                      {% endif %}">
 
             <div>
                 <label for="title">Title:</label>
-                <input type="text" id="title" name="title" required>
+                <input type="text" id="title" name="title" required value="{{ item.title }}">
             </div>
 
             <div>
@@ -97,12 +132,15 @@
                 </select>
             </div>
 
+            {# Progress input only for pages/episodes with known totals #}
+            {% if item.unit_type in ["pages", "episodes"] and item.total_units %}
             <div>
                 <label for="progress_value">{{ item.unit_type | capitalize }}:</label>
                 <input type="number" id="progress_value" name="progress_value" min="0"
                     max="{{ item.total_units }}" step="1" placeholder="0">
                 <span>/ {{ item.total_units }}</span>
             </div>
+            {% endif %}
 
             <div>
                 <label for="rating">Rating (1-10):</label>
@@ -120,8 +158,10 @@
             </div>
 
             <div class="form-buttons">
-                <button type="submit" id="saveBtn">Add Entry</button>
+                <button type="submit" id="saveBtn">{% if user_entry %}Save Changes{% else %}Add
+                    Entry{% endif %}</button>
             </div>
+
             <input type="hidden" name="next" value="{{ request.path }}">
             <input type="hidden" id="sourceField" name="source" value="{{ item.source }}">
             <input type="hidden" id="external_idField" name="external_id"
@@ -150,5 +190,4 @@
 </script>
 
 <script src="{{ url_for('static', filename='js/entry_details.js') }}"></script>
-
 {% endblock %}
