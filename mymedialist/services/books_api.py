@@ -115,7 +115,6 @@ def get_book_details(external_id: str) -> dict:
     metadata = {
         "publisher": info.get("publisher"),
         "page_count": info.get("pageCount"),
-        "categories": info.get("categories") or [],
     }
 
     return {
@@ -128,6 +127,7 @@ def get_book_details(external_id: str) -> dict:
         "description": description,
         "total_units": info.get("pageCount"),
         "unit_type": "pages",
+        "genres": info.get("categories") or [],
         "metadata": metadata,
     }
 

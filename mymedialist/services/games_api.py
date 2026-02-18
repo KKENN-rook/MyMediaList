@@ -123,7 +123,6 @@ def get_game_details(external_id: str | int) -> dict[str, Any]:
             companies.append(company)
 
     metadata = {
-        "genres": genres,
         "platforms": platforms,
         "companies": companies,
     }
@@ -136,6 +135,7 @@ def get_game_details(external_id: str | int) -> dict[str, Any]:
         "description": description,
         "total_units": 1,
         "unit_type": "unit",
+        "genres": genres,
         "metadata": metadata,
     }
 

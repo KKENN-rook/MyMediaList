@@ -57,6 +57,32 @@
             </div>
             {% endif %}
 
+            {# Units: Show only for meaningful unit types (pages/episodes) #}
+            {% if item.unit_type in ["pages", "episodes"] and item.total_units %}
+            <div class="metadata-item">
+                <dt class="metadata-label">{{ item.unit_type.capitalize() }}</dt>
+                <dd class="metadata-value">{{ item.total_units }}</dd>
+            </div>
+            {% endif %}
+
+            {% if item.genres %}
+            <div class="metadata-item">
+                <dt class="metadata-label">Genres</dt>
+                <dd class="metadata-value">{{ item.genres | join(", ") }}</dd>
+            </div>
+            {% endif %}
+
+            <!-- Show and films Data-->
+            {% if item.avg_runtime_minutes %}
+            <div class="metadata-item">
+                <dt class="metadata-label">
+                    {% if item.meta and item.meta.media_type == "movie" %}Runtime{% else %}Avg
+                    Runtime{% endif %}
+                </dt>
+                <dd class="metadata-value">{{ item.avg_runtime_minutes }} min</dd>
+            </div>
+            {% endif %}
+
             {# TV/Movie: Aired / Released #}
             {% if item.aired_start %}
             <div class="metadata-item">
@@ -71,37 +97,22 @@
             </div>
             {% endif %}
 
-            {# Units: Show only for meaningful unit types (pages/episodes) #}
-            {% if item.unit_type in ["pages", "episodes"] and item.total_units %}
+            <!--Game specific details -->
+            {% if item.metadata.platforms %}
             <div class="metadata-item">
-                <dt class="metadata-label">{{ item.unit_type.capitalize() }}</dt>
-                <dd class="metadata-value">{{ item.total_units }}</dd>
+                <dt class="metadata-label">Platforms</dt>
+                <dd class="metadata-value">{{ item.metadata.platforms | join(", ") }}</dd>
             </div>
             {% endif %}
 
-            {# TV/Movie: Avg runtime #}
-            {% if item.avg_runtime_minutes %}
+            {% if item.metadata.companies %}
             <div class="metadata-item">
-                <dt class="metadata-label">
-                    {% if item.meta and item.meta.media_type == "movie" %}Runtime{% else %}Avg
-                    Runtime{% endif %}
-                </dt>
-                <dd class="metadata-value">{{ item.avg_runtime_minutes }} min</dd>
+                <dt class="metadata-label">Companies</dt>
+                <dd class="metadata-value">{{ item.metadata.companies | join(", ") }}</dd>
             </div>
             {% endif %}
-
-            {# Genres: prefer item.genres (TMDb), fallback to metadata.categories (Books) #}
-            {% set genres = item.genres if item.genres is defined and item.genres else
-            (item.metadata.categories if item.metadata is defined and item.metadata.categories else
-            None) %}
-            {% if genres %}
-            <div class="metadata-item">
-                <dt class="metadata-label">Genres</dt>
-                <dd class="metadata-value">{{ genres | join(", ") }}</dd>
-            </div>
-            {% endif %}
-
         </dl>
+
     </aside>
 </div>
 
