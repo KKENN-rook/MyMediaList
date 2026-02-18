@@ -56,10 +56,10 @@
             </div>
             {% endif %}
 
-            {% if item.metadata.page_count %}
+            {% if item.unit_type in ["pages", "episodes"] and item.total_units %}
             <div class="metadata-item">
-                <dt class="metadata-label">Pages</dt>
-                <dd class="metadata-value">{{ item.metadata.page_count }}</dd>
+                <dt class="metadata-label">{{ item.unit_type.capitalize() }}</dt>
+                <dd class="metadata-value">{{ item.total_units }}</dd>
             </div>
             {% endif %}
 
