@@ -24,7 +24,7 @@ function openAddModal() {
   titleInput.value = config.title;
   saveBtn.textContent = "Add Entry";
 
-  // If progress exists, clear it explicitly (reset() should, but keep consistent)
+  // If progress exists, clear it explicitly
   if (progressInput) progressInput.value = "";
 
   // Enable API fields for add mode
@@ -48,25 +48,8 @@ function openEditModal() {
     progressInput.value = config.userEntryData.progress_value ?? "";
   }
 
-  // Set progress to max if user selects 'completed' 
-  const statusSelect = document.getElementById("status");
-
-  if (statusSelect) {
-    statusSelect.addEventListener("change", () => {
-      if (!progressInput) return;
-
-      if (statusSelect.value === "completed") {
-        const max = progressInput.max;
-        if (max) {
-          progressInput.value = max;
-        }
-      }
-    });
-  }
-
   ratingInput.value = config.userEntryData.rating ?? "";
   notesInput.value = config.userEntryData.notes ?? "";
-
   saveBtn.textContent = "Update Entry";
 
   // Disable API fields for edit mode

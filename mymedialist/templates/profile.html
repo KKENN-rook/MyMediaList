@@ -2,22 +2,37 @@
 {% block title %} {{ current_user.username }}'s Profile{% endblock %}
 
 {% block content %}
-<h1>{{ current_user.username.capitalize() }}'s Profile</h1>
+<h1 class="profile-title">{{ current_user.username.capitalize() }}'s Profile</h1>
 
-<h2>Your Stats</h2>
+<section class="profile-stats">
+  <h2>Your Stats</h2>
 
-{% for category, stats in stats_by_category.items() %}
-{% set category_labels = status_labels.get(category, status_labels["default"]) %}
-<h3>{{ category_titles[category] }}</h3>
-<ul>
-  <li>Mean Rating: {{ stats.avg_rating }}</li>
-  <li>Total Entries: {{ stats.total }}</li>
+  <div class="stats-grid">
+    {% for category, stats in stats_by_category.items() %}
+    {% set category_labels = status_labels.get(category, status_labels["default"]) %}
 
-  {% for status in statuses %}
-  <li>{{ category_labels[status] }}: {{ stats.status_counts.get(status, 0) }}</li>
-  {% endfor %}
-</ul>
-{% endfor %}
+    <article class="stat-card">
+      <header class="stat-card__header">
+        <h3 class="stat-card__title">{{ category_titles[category] }}</h3>
+        <div class="stat-card__meta">
+          <span class="pill">Mean Rating: {{ stats.avg_rating }}</span>
+          <span class="pill">Total Entries: {{ stats.total }}</span>
+        </div>
+      </header>
 
-<p>Need help? Begin by navigating to one of the lists at the top and add an entry!</p>
+      <ul class="stat-list">
+        {% for status in statuses %}
+        <li class="stat-row">
+          <span class="stat-label">{{ category_labels[status] }}</span>
+          <span class="stat-value">{{ stats.status_counts.get(status, 0) }}</span>
+        </li>
+        {% endfor %}
+      </ul>
+    </article>
+    {% endfor %}
+  </div>
+
+  <p class="help-hint">Need help? Begin by navigating to one of the lists at the top and add an
+    entry!</p>
+</section>
 {% endblock %}

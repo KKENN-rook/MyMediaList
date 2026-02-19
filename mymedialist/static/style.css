@@ -11,7 +11,6 @@
 button,
 .btn {
     background-color: #4caf93;
-    /* soft teal-green */
     color: white;
     border: none;
     border-radius: 6px;
@@ -31,9 +30,7 @@ button:active,
     transform: scale(0.97);
 }
 
-
 .flashes {
-    /* Removes bullet points */
     list-style: none;
     padding: 0;
     margin: 1em auto;
@@ -172,8 +169,8 @@ nav a.active {
 .modal {
     /* hidden by default */
     display: none;
-    position: fixed;
     /* Makes it above everything else */
+    position: fixed;
     z-index: 1000;
     left: 0;
     top: 0;
@@ -267,11 +264,121 @@ nav a.active {
 
 /* Details Page */
 .entry-cover {
-    max-width: 300px;  /* Constrain the container */
+    max-width: 300px;
 }
 
 .entry-cover img {
     width: 100%;
     height: auto;
-    display: block;  /* Change from inline to block */
+    display: block;
+}
+
+
+
+/* ===== Profile / Stats ===== */
+
+.profile-title {
+    margin: 0 0 0.75rem;
+    font-size: 2rem;
+    letter-spacing: -0.02em;
+}
+
+.profile-stats {
+    margin-top: 1rem;
+}
+
+.profile-stats>h2 {
+    margin: 0 0 1rem;
+    font-size: 1.25rem;
+    opacity: 0.9;
+}
+
+.stats-grid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    max-width: 450px;
+    margin: 0 auto;
+}
+
+.stat-card {
+    width: 100%;
+    border: 1px solid #b8d7cd;
+    border-radius: 8px;
+    background: white;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+@media (min-width: 720px) {
+    .stat-card {
+        grid-column: span 6;
+    }
+}
+
+@media (min-width: 1024px) {
+    .stat-card {
+        grid-column: span 4;
+    }
+}
+
+.stat-card__header {
+    background-color: #4caf93;
+    /* active tab color */
+    color: white;
+    padding: 10px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stat-card__title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: white;
+}
+
+.pill {
+    background-color: white;
+    color: #1e3b33;
+    /* navbar dark */
+    border: 1px solid #1e3b33;
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.stat-list {
+    list-style: none;
+    margin: 0;
+    padding: 12px 14px;
+    background-color: #f5f5f5;
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.stat-row:last-child {
+    border-bottom: none;
+}
+
+.stat-label {
+    color: #2d554a;
+}
+
+.stat-value {
+    font-weight: 600;
+    color: #1e3b33;
+}
+
+.help-hint {
+    margin-top: 1.25rem;
+    opacity: 0.8;
 }
