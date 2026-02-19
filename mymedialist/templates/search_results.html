@@ -5,25 +5,30 @@
 {% if results %}
 <ul class="search-results">
     {% for item in results %}
-    <li>
+    <li class="search-row">
         {% if item.image_url %}
-        <div><img src="{{ item.image_url }}" alt="cover" width="80"></div>
+        <img class="search-thumb" src="{{ item.image_url }}" alt="{{ item.title }}">
         {% endif %}
 
-        <a
-            href="{{ url_for('catalog.get_details', category=category, external_id=item.external_id) }}">
-            {{ item.title }}
-        </a>
+        <div class="search-main">
+            <div class="search-titleline">
+                <a class="search-title"
+                    href="{{ url_for('catalog.get_details', external_id=item.external_id, category=category) }}">
+                    {{ item.title }}
+                </a>
+                {% if item.year %}
+                <span class="search-year">({{ item.year }})</span>
+                {% endif %}
+            </div>
 
-        {% if item.year %} ({{ item.year }}){% endif %}
+            {% if item.authors %}
+            <div class="search-meta">{{ item.authors|join(", ") }}</div>
+            {% endif %}
 
-        {% if item.authors %}
-        <div>By {{ ", ".join(item.authors) }}</div>
-        {% endif %}
-
-        {% if item.description %}
-        <p>{{ item.description }}</p>
-        {% endif %}
+            {% if item.description %}
+            <p class="search-desc">{{ item.description }}</p>
+            {% endif %}
+        </div>
     </li>
     {% endfor %}
 </ul>
