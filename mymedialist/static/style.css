@@ -7,6 +7,14 @@
     margin-top: 30px;
 }
 
+/* Username/PW Requirements */
+.hint {
+    display: block;
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 10px;
+}
+
 /* General buttons */
 button,
 .btn {
@@ -81,7 +89,7 @@ nav a.active {
     color: white;
 }
 
-/* ========== TABLES & TABS ========== */
+/* ========== TABS ========== */
 .tabs {
     margin: 20px 0;
     display: flex;
@@ -112,12 +120,12 @@ nav a.active {
     border-color: #4caf93;
 }
 
-/* Table */
+/* ========== LIST TABLE ========== */
 .media-table {
-    width: 100%;
+    width: 70%;              /* pick one: 70% or 50% */
+    margin-top: 10px;        /* left-aligned by default */
     border-collapse: collapse;
-    margin-top: 10px;
-    table-layout: fixed;
+    table-layout: fixed;     /* enables fixed rating column */
 }
 
 .media-table th,
@@ -127,44 +135,25 @@ nav a.active {
     border-bottom: 1px solid #ddd;
 }
 
-.media-table th {
+/* Header row */
+.media-table thead th {
     background-color: #f8f8f8;
     font-weight: 600;
 }
 
-/* Title Column */
-.media-table th:first-child,
-.media-table td:first-child .media-table th:last-child,
-.media-table td:last-child {
-    width: 80%;
+/* Rating column */
+.media-table .col-rating {
+    width: 90px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
 }
 
-/* Rating Column */
-.media-table th:last-child,
-.media-table td:last-child {
-    width: 20%;
-}
-
-
-.media-table tr:hover {
+/* Row hover */
+.media-table tbody tr:hover {
     background-color: #f1f7ff;
 }
 
-.content {
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-/* Username/PW Requirements */
-.hint {
-    display: block;
-    font-size: 0.9em;
-    color: #666;
-    margin-bottom: 10px;
-}
-
+/*======== MODAL ========== */
 /* Modal background */
 .modal {
     /* hidden by default */
@@ -272,7 +261,6 @@ nav a.active {
     height: auto;
     display: block;
 }
-
 
 
 /* ===== Profile / Stats ===== */

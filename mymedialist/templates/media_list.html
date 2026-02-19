@@ -16,51 +16,47 @@
     </div>
 </div>
 
-<!-- Tabs for filtering by status -->
+<!-- Tabs for filtering by status (outside the card) -->
 <div class="tabs">
     <button class="tab active" data-status="all">All</button>
-
     {% for key in statuses %}
-    <button class="tab" data-status="{{ key }}">
-        {{ status_labels[key] }}
-    </button>
+    <button class="tab" data-status="{{ key }}">{{ status_labels[key] }}</button>
     {% endfor %}
 </div>
 
-<!-- Table -->
-<table class="media-table">
-    <thead>
-        <tr>
-            <th>Title</th>
-            <th>Rating</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for entry in entries %}
-        <tr data-status="{{ entry.status }}">
-            <td class="title-cell">
-                <span class="title-text">{{ entry.media.title }}</span>
-                <button class="edit-btn" data-entry-id="{{ entry.id }}"
-                    data-title="{{ entry.media.title }}"
-                    data-rating="{{ entry.rating if entry.rating is not none else '' }}"
-                    data-status="{{ entry.status }}" data-notes="{{ entry.notes or '' }}"
-                    data-progress="{{ entry.progress_value or '' }}"
-                    data-total-units="{{ entry.media.total_units or '' }}"
-                    data-unit-type="{{ entry.media.unit_type or '' }}">
-                    Edit
-                </button>
-            </td>
-            <td>
-                {% if entry.rating is not none %}
-                {{ entry.rating }}
-                {% else %}
-                -
-                {% endif %}
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<!-- Table card -->
+<div class="list-container">
+    <table class="media-table">
+        <thead>
+            <tr>
+                <th class="col-title">Title</th>
+                <th class="col-rating">Rating</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in entries %}
+            <tr data-status="{{ entry.status }}">
+                <td class="title-cell">
+                    <span class="title-text">{{ entry.media.title }}</span>
+                    <button class="edit-btn" data-entry-id="{{ entry.id }}"
+                        data-title="{{ entry.media.title }}"
+                        data-rating="{{ entry.rating if entry.rating is not none else '' }}"
+                        data-status="{{ entry.status }}" data-notes="{{ entry.notes or '' }}"
+                        data-progress="{{ entry.progress_value or '' }}"
+                        data-total-units="{{ entry.media.total_units or '' }}"
+                        data-unit-type="{{ entry.media.unit_type or '' }}">
+                        Edit
+                    </button>
+                </td>
+                <td class="col-rating">
+                    {{ entry.rating if entry.rating is not none else '-' }}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
 
 <!-- Entry Modal  -->
 <div id="entryModal" class="modal">
