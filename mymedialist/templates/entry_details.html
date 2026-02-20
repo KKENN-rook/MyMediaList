@@ -5,115 +5,125 @@
 {% endblock %}
 
 {% block content %}
-<div class="entry-details">
-    <!-- Hero Section -->
-    <div class="entry-hero">
-        <div class="entry-cover">
-            {% if item.image_url %}
-            <img src="{{ item.image_url }}" alt="Cover image for {{ item.title }}">
-            {% else %}
-            <div class="entry-cover-placeholder">No image available</div>
-            {% endif %}
-        </div>
+<div class="content entry-page">
 
-        <div class="entry-header">
-            <h1 class="entry-title">{{ item.title }}</h1>
+    <!-- Page Title -->
+    <h1 class="entry-title">{{ item.title }}</h1>
+
+    <!-- 2-column layout -->
+    <div class="entry-layout">
+
+        <!-- LEFT COLUMN -->
+        <div class="entry-left">
+
+            <div class="entry-cover">
+                {% if item.image_url %}
+                <img src="{{ item.image_url }}" alt="Cover image for {{ item.title }}">
+                {% else %}
+                <div class="entry-cover-placeholder">No image available</div>
+                {% endif %}
+            </div>
+
             {% if user_entry %}
-            <button id="editFromDetailsBtn">Edit Entry</button>
+            <button class="entry-action-btn" id="editFromDetailsBtn">Edit Entry</button>
             {% else %}
-            <button id="addFromDetailsBtn">Add to List</button>
+            <button class="entry-action-btn" id="addFromDetailsBtn">Add to List</button>
             {% endif %}
+
+            <aside class="entry-metadata">
+                <h2 class="section-title">Details</h2>
+
+                <dl class="metadata-list">
+
+                    {# Books: Authors #}
+                    {% if item.authors %}
+                    <div class="metadata-item">
+                        <dt class="metadata-label">Author{{ item.authors|length > 1 and 's' or '' }}
+                        </dt>
+                        <dd class="metadata-value">{{ item.authors | join(", ") }}</dd>
+                    </div>
+                    {% endif %}
+
+                    {# Books: Published date #}
+                    {% if item.published_date %}
+                    <div class="metadata-item">
+                        <dt class="metadata-label">Published</dt>
+                        <dd class="metadata-value">{{ item.published_date }}</dd>
+                    </div>
+                    {% endif %}
+
+                    {# Units: Show only for meaningful unit types (pages/episodes) #}
+                    {% if item.unit_type in ["pages", "episodes"] and item.total_units %}
+                    <div class="metadata-item">
+                        <dt class="metadata-label">{{ item.unit_type.capitalize() }}</dt>
+                        <dd class="metadata-value">{{ item.total_units }}</dd>
+                    </div>
+                    {% endif %}
+
+                    {% if item.genres %}
+                    <div class="metadata-item">
+                        <dt class="metadata-label">Genres</dt>
+                        <dd class="metadata-value">{{ item.genres | join(", ") }}</dd>
+                    </div>
+                    {% endif %}
+
+                    <!-- Show and films Data-->
+                    {% if item.avg_runtime_minutes %}
+                    <div class="metadata-item">
+                        <dt class="metadata-label">
+                            {% if item.meta and item.meta.media_type == "movie" %}Runtime{% else
+                            %}Avg Runtime{% endif %}
+                        </dt>
+                        <dd class="metadata-value">{{ item.avg_runtime_minutes }} min</dd>
+                    </div>
+                    {% endif %}
+
+                    {# TV/Movie: Aired / Released #}
+                    {% if item.aired_start %}
+                    <div class="metadata-item">
+                        <dt class="metadata-label">
+                            {% if item.meta and item.meta.media_type == "movie" %}Released{% else
+                            %}Aired{% endif %}
+                        </dt>
+                        <dd class="metadata-value">
+                            {{ item.aired_start }}
+                            {% if item.aired_end %} to {{ item.aired_end }}{% endif %}
+                        </dd>
+                    </div>
+                    {% endif %}
+
+                    <!-- Game specific details -->
+                    {% if item.metadata.platforms %}
+                    <div class="metadata-item">
+                        <dt class="metadata-label">Platforms</dt>
+                        <dd class="metadata-value">{{ item.metadata.platforms | join(", ") }}</dd>
+                    </div>
+                    {% endif %}
+
+                    {% if item.metadata.companies %}
+                    <div class="metadata-item">
+                        <dt class="metadata-label">Companies</dt>
+                        <dd class="metadata-value">{{ item.metadata.companies | join(", ") }}</dd>
+                    </div>
+                    {% endif %}
+
+                </dl>
+            </aside>
         </div>
+
+        <!-- RIGHT COLUMN -->
+        <div class="entry-right">
+            <section class="entry-synopsis-section">
+                <h2 class="section-title">Synopsis</h2>
+                {% if item.description %}
+                <div class="entry-synopsis">{{ item.description | safe }}</div>
+                {% else %}
+                <p class="entry-synopsis entry-synopsis--empty">No synopsis available.</p>
+                {% endif %}
+            </section>
+        </div>
+
     </div>
-
-    <!-- Synopsis -->
-    <section class="entry-synopsis-section">
-        <h2 class="section-title">Synopsis</h2>
-        {% if item.description %}
-        <div class="entry-synopsis">{{ item.description | safe }}</div>
-        {% else %}
-        <p class="entry-synopsis entry-synopsis--empty">No synopsis available.</p>
-        {% endif %}
-    </section>
-
-    <!-- Details -->
-    <aside class="entry-metadata">
-        <h2 class="section-title">Details</h2>
-        <dl class="metadata-list">
-
-            {# Books: Authors #}
-            {% if item.authors %}
-            <div class="metadata-item">
-                <dt class="metadata-label">Author{{ item.authors|length > 1 and 's' or '' }}</dt>
-                <dd class="metadata-value">{{ item.authors | join(", ") }}</dd>
-            </div>
-            {% endif %}
-
-            {# Books: Published date #}
-            {% if item.published_date %}
-            <div class="metadata-item">
-                <dt class="metadata-label">Published</dt>
-                <dd class="metadata-value">{{ item.published_date }}</dd>
-            </div>
-            {% endif %}
-
-            {# Units: Show only for meaningful unit types (pages/episodes) #}
-            {% if item.unit_type in ["pages", "episodes"] and item.total_units %}
-            <div class="metadata-item">
-                <dt class="metadata-label">{{ item.unit_type.capitalize() }}</dt>
-                <dd class="metadata-value">{{ item.total_units }}</dd>
-            </div>
-            {% endif %}
-
-            {% if item.genres %}
-            <div class="metadata-item">
-                <dt class="metadata-label">Genres</dt>
-                <dd class="metadata-value">{{ item.genres | join(", ") }}</dd>
-            </div>
-            {% endif %}
-
-            <!-- Show and films Data-->
-            {% if item.avg_runtime_minutes %}
-            <div class="metadata-item">
-                <dt class="metadata-label">
-                    {% if item.meta and item.meta.media_type == "movie" %}Runtime{% else %}Avg
-                    Runtime{% endif %}
-                </dt>
-                <dd class="metadata-value">{{ item.avg_runtime_minutes }} min</dd>
-            </div>
-            {% endif %}
-
-            {# TV/Movie: Aired / Released #}
-            {% if item.aired_start %}
-            <div class="metadata-item">
-                <dt class="metadata-label">
-                    {% if item.meta and item.meta.media_type == "movie" %}Released{% else %}Aired{%
-                    endif %}
-                </dt>
-                <dd class="metadata-value">
-                    {{ item.aired_start }}
-                    {% if item.aired_end %} – {{ item.aired_end }}{% endif %}
-                </dd>
-            </div>
-            {% endif %}
-
-            <!--Game specific details -->
-            {% if item.metadata.platforms %}
-            <div class="metadata-item">
-                <dt class="metadata-label">Platforms</dt>
-                <dd class="metadata-value">{{ item.metadata.platforms | join(", ") }}</dd>
-            </div>
-            {% endif %}
-
-            {% if item.metadata.companies %}
-            <div class="metadata-item">
-                <dt class="metadata-label">Companies</dt>
-                <dd class="metadata-value">{{ item.metadata.companies | join(", ") }}</dd>
-            </div>
-            {% endif %}
-        </dl>
-
-    </aside>
 </div>
 
 <!-- Entry Modal -->

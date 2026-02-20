@@ -52,6 +52,8 @@ document.querySelectorAll(".edit-btn").forEach(btn => {
     });
 });
 
+
+
 // Close modal
 document.querySelectorAll(".close").forEach(el => el.addEventListener("click", () => {
     modal.style.display = "none";
