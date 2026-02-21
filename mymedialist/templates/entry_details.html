@@ -38,7 +38,7 @@
                     {# Books: Authors #}
                     {% if item.authors %}
                     <div class="metadata-item">
-                        <dt class="metadata-label">Author{{ item.authors|length > 1 and 's' or '' }}
+                        <dt class="metadata-label">Author:{{ item.authors|length > 1 and 's' or '' }}
                         </dt>
                         <dd class="metadata-value">{{ item.authors | join(", ") }}</dd>
                     </div>
@@ -47,7 +47,7 @@
                     {# Books: Published date #}
                     {% if item.published_date %}
                     <div class="metadata-item">
-                        <dt class="metadata-label">Published</dt>
+                        <dt class="metadata-label">Published:</dt>
                         <dd class="metadata-value">{{ item.published_date }}</dd>
                     </div>
                     {% endif %}
@@ -55,14 +55,14 @@
                     {# Units: Show only for meaningful unit types (pages/episodes) #}
                     {% if item.unit_type in ["pages", "episodes"] and item.total_units %}
                     <div class="metadata-item">
-                        <dt class="metadata-label">{{ item.unit_type.capitalize() }}</dt>
+                        <dt class="metadata-label">{{ item.unit_type.capitalize() }}:</dt>
                         <dd class="metadata-value">{{ item.total_units }}</dd>
                     </div>
                     {% endif %}
 
                     {% if item.genres %}
                     <div class="metadata-item">
-                        <dt class="metadata-label">Genres</dt>
+                        <dt class="metadata-label">Genres:</dt>
                         <dd class="metadata-value">{{ item.genres | join(", ") }}</dd>
                     </div>
                     {% endif %}
@@ -71,8 +71,8 @@
                     {% if item.avg_runtime_minutes %}
                     <div class="metadata-item">
                         <dt class="metadata-label">
-                            {% if item.meta and item.meta.media_type == "movie" %}Runtime{% else
-                            %}Avg Runtime{% endif %}
+                            {% if item.meta and item.meta.media_type == "movie" %}Runtime:{% else
+                            %}Avg Runtime:{% endif %}
                         </dt>
                         <dd class="metadata-value">{{ item.avg_runtime_minutes }} min</dd>
                     </div>
@@ -82,8 +82,8 @@
                     {% if item.aired_start %}
                     <div class="metadata-item">
                         <dt class="metadata-label">
-                            {% if item.meta and item.meta.media_type == "movie" %}Released{% else
-                            %}Aired{% endif %}
+                            {% if item.meta and item.meta.media_type == "movie" %}Released:{% else
+                            %}Aired:{% endif %}
                         </dt>
                         <dd class="metadata-value">
                             {{ item.aired_start }}
@@ -95,14 +95,14 @@
                     <!-- Game specific details -->
                     {% if item.metadata.platforms %}
                     <div class="metadata-item">
-                        <dt class="metadata-label">Platforms</dt>
+                        <dt class="metadata-label">Platforms:</dt>
                         <dd class="metadata-value">{{ item.metadata.platforms | join(", ") }}</dd>
                     </div>
                     {% endif %}
 
                     {% if item.metadata.companies %}
                     <div class="metadata-item">
-                        <dt class="metadata-label">Companies</dt>
+                        <dt class="metadata-label">Companies:</dt>
                         <dd class="metadata-value">{{ item.metadata.companies | join(", ") }}</dd>
                     </div>
                     {% endif %}

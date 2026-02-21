@@ -10,12 +10,17 @@
 
 <body>
     {% if current_user.is_authenticated %}
-    <nav>
-        <a href="{{ url_for('main.profile') }}">Profile</a>
-        <a href="{{ url_for('lists.media_list', category='books') }}">Books</a>
-        <a href="{{ url_for('lists.media_list', category='games') }}">Games</a>
-        <a href="{{ url_for('lists.media_list', category='shows') }}">Shows & Films</a>
-        <a href="{{ url_for('auth.logout') }}">Logout</a>
+    <nav class="navbar">
+        <a class="nav-logo" href="{{ url_for('main.home') }}">
+            MyMediaList
+        </a>
+
+        <div class="nav-links">
+            <a href="{{ url_for('main.profile') }}">Profile</a>
+            <a href="{{ url_for('lists.media_list', category='books') }}">Books</a>
+            <a href="{{ url_for('lists.media_list', category='games') }}">Games</a>
+            <a href="{{ url_for('lists.media_list', category='shows') }}">Shows & Films</a>
+        </div>
 
         <form method="get" action="{{ url_for('catalog.search') }}" class="nav-search">
             {% set current_category = category %}
@@ -29,6 +34,8 @@
             <input type="text" name="q" placeholder="Search titles..." required>
             <button type="submit">Search</button>
         </form>
+
+        <a class="nav-logout" href="{{ url_for('auth.logout') }}">Logout</a>
     </nav>
     {% endif %}
 
