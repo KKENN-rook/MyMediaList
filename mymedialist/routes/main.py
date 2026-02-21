@@ -21,6 +21,14 @@ def profile():
     for category in CATEGORY_TITLES.keys():
         stats_by_category[category] = get_category_stats(db.session, user_id=current_user.id, category=category)
     return render_template(
-        "profile.html", stats_by_category=stats_by_category, category_titles=CATEGORY_TITLES, status_labels=STATUS_LABELS,
-        statuses=STATUSES
+        "profile.html",
+        stats_by_category=stats_by_category,
+        category_titles=CATEGORY_TITLES,
+        status_labels=STATUS_LABELS,
+        statuses=STATUSES,
     )
+
+
+@bp.route("/about")
+def about():
+    return render_template("about.html")
