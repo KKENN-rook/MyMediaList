@@ -9,9 +9,9 @@
 # About The Project
 
 MyMediaList is a unified media tracker for books, games, TV shows, and films.
-<br>
+<br><br>
 Inspired by platforms like Goodreads and Letterboxd, it allows users to add media to personal lists, track progress, leave ratings and notes all in one place. 
-<br>
+<br><br>
 Designed for people who consume media across multiple formats and want a single, organized dashboard for everything instead of being split across multiple. 
 
 ## Core Features
