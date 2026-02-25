@@ -1,3 +1,4 @@
+import os
 from flask import Flask
 from dotenv import load_dotenv
 
@@ -8,8 +9,9 @@ from .shared_constants import CATEGORIES, CATEGORY_TITLES, STATUS_LABELS
 def create_app():
     load_dotenv()
     app = Flask(__name__)
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///mymedialist.db"
-    app.secret_key = "development_build"
+    # Construct absolute path to database file
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
+    app.secret_key = os.getenv("FLASK_SECRET_KEY")
 
     @app.context_processor
     def inject_ui_constants():
@@ -26,7 +28,7 @@ def create_app():
     # register models
     from . import models
 
-    # register bps 
+    # register bps
     from .routes.main import bp as main_bp
     from .routes.auth import bp as auth_bp
     from .routes.lists import bp as lists_bp
