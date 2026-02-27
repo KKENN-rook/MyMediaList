@@ -150,6 +150,26 @@ The application is organized into the following pages:
   - Total entries per category
   - Average ratings
 
+## Screenshots
+<p align="center">
+  <a href="images/home.png">
+    <img src="images/home.png" width="260" style="margin: 5px;" />
+  </a>
+  <a href="images/profile.png">
+    <img src="images/profile.png" width="260" style="margin: 5px;" />
+  </a>
+  <a href="images/list.png">
+    <img src="images/list.png" width="260" style="margin: 5px;" />
+  </a>
+  <a href="images/search.png">
+    <img src="images/search.png" width="260" style="margin: 5px;" />
+  </a>
+  <a href="images/details.png">
+    <img src="images/details.png" width="260" style="margin: 5px;" />
+  </a>
+</p>
+
+
 ## Roadmap
 
 Planned improvements and future enhancements:
