@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-<img src="images/mymedialist_demo.gif" alt="MyMediaList Demo">
+<img src="images/demo.gif" alt="MyMediaList Demo">
 </p>
 
 <!-- ABOUT THE PROJECT -->
