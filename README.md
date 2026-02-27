@@ -1,9 +1,12 @@
 <h3 align="center">MyMediaList</h3>
 
 <p align="center">
-  A full-stack Flask web application for tracking books, games, shows, and movies from a single convenient hub. 
+  A full-stack Flask web application for tracking books, games, shows, and movies from a single convenient hub.
 </p>
 
+<p align="center">
+<img src="images/mymedialist_demo.gif" width="650" alt="MyMediaList Demo">
+</p>
 
 <!-- ABOUT THE PROJECT -->
 # About The Project
